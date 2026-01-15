@@ -1,0 +1,62 @@
+# Session State
+
+> Copy this to your project's `.claude/STATE.md` to track session progress.
+> Update this file as you work to maintain context across sessions.
+
+## Current Focus
+
+**Task:** [What we're working on now]
+
+**Status:** [In Progress / Blocked / Complete]
+
+**Branch:** `feature/branch-name`
+
+## Session Progress
+
+### Completed This Session
+- [ ] Task 1
+- [ ] Task 2
+
+### In Progress
+- [ ] Current task
+
+### Blocked
+- [ ] Blocked task: [Reason]
+
+## Key Decisions Made
+
+| Decision | Choice | Why |
+|----------|--------|-----|
+| | | |
+
+## Context Needed
+
+Information that should be preserved:
+- [Important context 1]
+- [Important context 2]
+
+## Files Modified
+
+| File | Change | Status |
+|------|--------|--------|
+| | | |
+
+## Open Questions
+
+- [ ] Question 1
+- [ ] Question 2
+
+## Notes
+
+[Any important notes for future sessions]
+
+## Handoff Points
+
+If stopping mid-work:
+- **Last action:** [What was just done]
+- **Next action:** [What to do next]
+- **Watch out for:** [Potential issues]
+
+---
+
+*Last updated: [timestamp]*

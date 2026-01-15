@@ -1,0 +1,100 @@
+# Project: [PROJECT_NAME]
+
+> Copy this to your project's `.claude/PROJECT.md` and customize.
+
+## Overview
+
+**What:** [One sentence describing the project]
+
+**Why:** [Problem being solved]
+
+**For:** [Target users]
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | |
+| Backend | |
+| Database | |
+| Hosting | |
+| Auth | |
+
+## Project Structure
+
+```
+project/
+├── src/
+│   ├── components/    # UI components
+│   ├── lib/           # Utilities
+│   ├── app/           # Routes (if Next.js)
+│   └── ...
+├── tests/             # Test files
+├── docs/              # Documentation
+└── ...
+```
+
+## Commands
+
+```bash
+# Development
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Testing
+npm test             # Run tests
+npm test -- --watch  # Watch mode
+npm test -- --coverage
+
+# Quality
+npm run lint         # Run linter
+npm run typecheck    # Type checking
+npm run format       # Format code
+```
+
+## Conventions
+
+### Code Style
+- [Language conventions]
+- [Naming patterns]
+- [File organization]
+
+### Components
+- [Component patterns]
+- [State management approach]
+
+### API
+- [API patterns]
+- [Error handling]
+
+## Environment
+
+Required environment variables:
+```bash
+# .env.local
+DATABASE_URL=
+API_KEY=
+```
+
+## Key Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| | | |
+
+## Important Files
+
+| File | Purpose |
+|------|---------|
+| | |
+
+## External Services
+
+| Service | Purpose | Docs |
+|---------|---------|------|
+| | | |
+
+---
+
+*Keep this file updated as the project evolves.*

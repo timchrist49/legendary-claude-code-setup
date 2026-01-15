@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$comment": "Example MCP configuration for Claude Code. This file is for reference - MCP servers are configured via 'claude mcp add' commands.",
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_CONTEXT7_API_KEY"],
+      "description": "Up-to-date documentation for libraries and frameworks"
+    },
+    "tavily-mcp": {
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@latest"],
+      "env": {
+        "TAVILY_API_KEY": "YOUR_TAVILY_API_KEY"
+      },
+      "description": "AI-powered web search for research and current information"
+    },
+    "browserbase": {
+      "command": "npx",
+      "args": ["-y", "@browserbasehq/mcp-server-browserbase"],
+      "env": {
+        "BROWSERBASE_API_KEY": "YOUR_BROWSERBASE_API_KEY",
+        "BROWSERBASE_PROJECT_ID": "YOUR_BROWSERBASE_PROJECT_ID"
+      },
+      "description": "Cloud browser control for research and automation"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--isolated", "--no-sandbox"],
+      "env": {
+        "DISPLAY": ":99",
+        "PLAYWRIGHT_HEADLESS": "true",
+        "PLAYWRIGHT_CHROMIUM_USE_HEADLESS_NEW": "true",
+        "DEBIAN_FRONTEND": "noninteractive"
+      },
+      "description": "Browser automation for testing and UI workflows"
+    },
+    "strawberry": {
+      "command": "python3",
+      "args": ["-m", "strawberry.mcp_server"],
+      "description": "Procedural hallucination detection (Pythea)"
+    }
+  },
+  "_notes": {
+    "installation": "MCP servers are installed via 'claude mcp add' commands, not by editing this file directly",
+    "verification": "Run 'claude mcp list' to see currently configured servers",
+    "documentation": "See https://code.claude.com/docs for MCP configuration details"
+  }
+}

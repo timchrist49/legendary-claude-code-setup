@@ -1,0 +1,68 @@
+# Roadmap
+
+> Copy this to your project's `.claude/ROADMAP.md` to track planned work.
+
+## Vision
+
+[One paragraph describing where the project is headed]
+
+## Current Phase: [Phase Name]
+
+**Goal:** [What this phase accomplishes]
+
+**Timeline:** [Approximate duration]
+
+### Phase Tasks
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
+
+### Phase Success Criteria
+- [ ] Criteria 1
+- [ ] Criteria 2
+
+---
+
+## Phases Overview
+
+### Phase 1: [Name] ✅ Complete
+- [x] Completed task 1
+- [x] Completed task 2
+
+### Phase 2: [Name] 🔄 In Progress
+- [ ] Current task 1
+- [ ] Current task 2
+
+### Phase 3: [Name] 📋 Planned
+- [ ] Future task 1
+- [ ] Future task 2
+
+### Phase N: [Name] 💭 Ideas
+- [ ] Maybe someday
+
+---
+
+## Backlog
+
+Items to consider for future phases:
+
+### High Priority
+- [ ] Important item
+
+### Medium Priority
+- [ ] Useful item
+
+### Low Priority / Nice to Have
+- [ ] Optional item
+
+---
+
+## Done
+
+### Recently Completed
+- [x] [Date] Item
+- [x] [Date] Item
+
+---
+
+*Keep this updated as priorities change.*
