@@ -4,12 +4,18 @@
 
 ## Overview
 
-MCP servers are configured via the `claude mcp` command and provide Claude with access to:
+This setup includes **8 MCP servers**:
 
-- Documentation sources (Context7)
-- Web search (Tavily)
-- Browser automation (Browserbase, Playwright)
-- Verification tools (Strawberry)
+| Server | Purpose | API Key Required? |
+|--------|---------|-------------------|
+| Context7 | Documentation lookup | Yes |
+| Tavily | Web search | Yes |
+| Browserbase | Cloud browser | Yes |
+| Playwright | Local browser | No |
+| Strawberry | Hallucination detection | No |
+| GitHub | Repository operations | Yes |
+| E2B | Sandboxed execution | Yes |
+| Sequential Thinking | Problem decomposition | No |
 
 ## Managing MCP Servers
 
@@ -107,6 +113,148 @@ Inside Claude Code, ask it to use the server:
 
 - [Tavily Website](https://tavily.com)
 - [Tavily MCP on npm](https://www.npmjs.com/package/tavily-mcp)
+
+---
+
+## GitHub MCP
+
+**Purpose:** Repository operations, PR workflows, and issue management.
+
+**Why it matters:** Allows Claude to manage GitHub repos, create PRs, and handle issues without leaving the CLI.
+
+### Setup
+
+1. Create a Personal Access Token at [github.com/settings/tokens](https://github.com/settings/tokens)
+   - Required scopes: `repo`, `read:org`, `read:user`
+
+2. Add the server:
+   ```bash
+   claude mcp add github \
+     --env GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_TOKEN \
+     -- npx -y @modelcontextprotocol/server-github
+   ```
+
+### Usage
+
+```
+"Create a PR for this feature branch"
+"List open issues with label 'bug'"
+"Check CI status for PR #123"
+"Search for files containing 'deprecated' in the repo"
+"Create a new issue for the login bug we discussed"
+```
+
+### Available Tools
+
+- `search_repositories` - Find repos by query
+- `get_file_contents` - Read files from repos
+- `create_or_update_file` - Write files to repos
+- `push_files` - Push multiple files
+- `create_issue` - Open new issues
+- `list_issues` - Query issues
+- `create_pull_request` - Open PRs
+- `list_commits` - View commit history
+- `create_branch` - Create new branches
+
+### Documentation
+
+- [npm: @modelcontextprotocol/server-github](https://www.npmjs.com/package/@modelcontextprotocol/server-github)
+
+---
+
+## E2B MCP
+
+**Purpose:** Sandboxed code execution in isolated cloud environments.
+
+**Why it matters:** Run untrusted code, test migrations, and validate scripts without risking your local system.
+
+### Setup
+
+1. Get API key at [e2b.dev](https://e2b.dev)
+
+2. Add the server:
+   ```bash
+   claude mcp add e2b \
+     --env E2B_API_KEY=YOUR_API_KEY \
+     -- npx -y @e2b/mcp-server
+   ```
+
+### Usage
+
+```
+"Run this Python script in a sandbox to test it safely"
+"Execute the migration script in an isolated environment first"
+"Test this shell command without affecting my system"
+"Validate the build script in a clean environment"
+```
+
+### Available Tools
+
+- `create_sandbox` - Create new isolated environment
+- `execute_code` - Run code in sandbox
+- `install_packages` - Install dependencies
+- `read_file` - Read files from sandbox
+- `write_file` - Write files to sandbox
+- `run_command` - Execute shell commands
+- `close_sandbox` - Terminate sandbox
+
+### Best Practices
+
+- Use E2B for any code you haven't verified
+- Test destructive operations in sandbox first
+- Validate migration scripts before production
+- Close sandboxes promptly (billing consideration)
+
+### Documentation
+
+- [E2B Website](https://e2b.dev)
+- [npm: @e2b/mcp-server](https://www.npmjs.com/package/@e2b/mcp-server)
+
+---
+
+## Sequential Thinking MCP
+
+**Purpose:** Structured problem decomposition through dynamic thought sequences.
+
+**Why it matters:** Enables systematic analysis of complex problems, architecture planning, and trade-off analysis.
+
+### Setup
+
+No API key required:
+
+```bash
+claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
+```
+
+### Usage
+
+```
+"Use sequential thinking to plan this architecture"
+"Break down this problem step by step"
+"Analyze the trade-offs between these three approaches"
+"Help me think through the database schema design"
+```
+
+### When to Use
+
+- Multi-step architectural decisions
+- Complex debugging scenarios
+- Trade-off analysis between approaches
+- Problems with unclear scope
+- Planning before implementation
+
+### How It Works
+
+1. Start with initial problem assessment
+2. Break into logical thought steps
+3. Each step can build on, question, or revise previous steps
+4. Adjust total steps as understanding develops
+5. Branch into alternative approaches when needed
+6. Converge on verified solution
+
+### Documentation
+
+- [GitHub: modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers)
 
 ---
 
@@ -257,6 +405,21 @@ Xvfb :99 -screen 0 1920x1080x24 &
 
 ---
 
+## MCP Tool Selection Matrix
+
+| Need | Primary Tool | Fallback |
+|------|-------------|----------|
+| Library/API docs | Context7 | Tavily search |
+| Current news/info | Tavily search | Browserbase |
+| Web scraping | Browserbase | Playwright |
+| UI testing | Playwright | Browserbase |
+| Verify claims | Strawberry | Context7 + Tavily |
+| PR/Issue management | GitHub | Bash (gh CLI) |
+| Run untrusted code | E2B | Docker sandbox |
+| Complex planning | Sequential Thinking | Planning skill |
+
+---
+
 ## Server Configuration Reference
 
 ### Via CLI (Recommended)
@@ -279,27 +442,20 @@ claude mcp remove NAME
 
 MCP servers are stored in `~/.claude/` config files. You can also edit `~/.claude/settings.json` directly, but using `claude mcp` commands is recommended.
 
-Example structure:
-
-```json
-{
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_KEY"]
-    }
-  }
-}
-```
-
 ---
 
 ## Best Practices
 
 1. **Use Context7 for docs** - Always verify library APIs and configuration
-2. **Browserbase for research** - Web scraping, screenshots, data extraction
-3. **Playwright for testing** - UI automation and verification
-4. **Strawberry for verification** - High-stakes decisions and security
+2. **Use Tavily for research** - Current information, news, pricing
+3. **Use GitHub for repo ops** - PRs, issues, CI status
+4. **Use E2B for untrusted code** - Test before running locally
+5. **Use Sequential Thinking for planning** - Complex architecture decisions
+6. **Use Browserbase for research** - Web scraping, screenshots
+7. **Use Playwright for testing** - UI automation and verification
+8. **Use Strawberry for verification** - High-stakes decisions and security
+
+---
 
 ## Common Issues
 
@@ -330,7 +486,10 @@ pip install package-name
 - Check keys haven't expired
 - Ensure correct environment variables are set
 
+---
+
 ## References
 
 - [Claude Code MCP Documentation](https://docs.anthropic.com/claude-code)
 - [Model Context Protocol](https://modelcontextprotocol.io)
+- [MCP Server Directory](https://mcpservers.org)
