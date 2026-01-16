@@ -400,11 +400,23 @@ Memory MCP entities:
 └── "Monitoring: Datadog"
 ```
 
-## Related Skills
+## Related Skills & Workflows
 
 - @security-review - For security in deployments
-- @implementation - For infrastructure code
-- @planning - For deployment planning
+- @research - For researching deployment best practices
+- /superpowers:write-plan - For planning infrastructure changes
+- /superpowers:execute-plan - For implementing infrastructure code
+
+## Superpowers Integration
+
+For deployment and infrastructure work:
+```
+1. Use /superpowers:brainstorm for architecture decisions
+2. Use /superpowers:write-plan for migration/deployment plans
+3. Execute with /superpowers:execute-plan
+4. Test in E2B sandbox before production
+5. Verify with Strawberry for security config
+```
 
 ---
 

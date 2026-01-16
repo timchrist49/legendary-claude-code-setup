@@ -284,11 +284,22 @@ Entity: DECISION
 │   └── "Date: 2025-01-15"
 ```
 
-## Related Skills
+## Related Skills & Workflows
 
-- @planning - For acting on research
-- @implementation - For applying findings
-- @debugging - Research for problem-solving
+- @security-review - For security research
+- @devsecops - For deployment/infrastructure research
+- /superpowers:brainstorm - For clarifying research questions
+- /superpowers:write-plan - For acting on research findings
+
+## Superpowers Integration
+
+After research is complete:
+```
+1. Use /superpowers:brainstorm to validate findings with user
+2. Use /superpowers:write-plan to create implementation plan
+3. Execute with /superpowers:execute-plan
+4. Use /superpowers:systematic-debugging if issues arise
+```
 
 ---
 

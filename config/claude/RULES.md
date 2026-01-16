@@ -289,24 +289,66 @@ AUTOMATICALLY USE E2B sandbox when:
 
 **Default to Action:** When a scenario matches auto-invocation criteria, use the tool first, don't ask for permission. The user expects proactive tool usage.
 
-## Rule 12: Plugin & Slash Command Auto-Invocation
+## Rule 12: MANDATORY Superpowers Workflow
 
-**Use plugins and slash commands proactively for structured workflows.**
+**Superpowers is the PRIMARY workflow engine. You MUST use it for feature work.**
 
 ```
-AUTOMATICALLY USE Superpowers when:
-├── Planning a new feature → /superpowers:brainstorm
-├── Creating implementation plan → /superpowers:write-plan
-├── Executing multi-step work → /superpowers:execute-plan
-├── Starting complex task → brainstorm first
-└── Need structured approach → use Superpowers workflow
+┌─────────────────────────────────────────────────────────────┐
+│         MANDATORY - NO EXCEPTIONS - ENFORCED                 │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  FOR ANY FEATURE/IMPLEMENTATION REQUEST:                     │
+│                                                              │
+│  1. MUST use /superpowers:brainstorm FIRST                   │
+│     - Before ANY coding                                      │
+│     - Clarifies requirements                                 │
+│     - Gets user approval on design                           │
+│                                                              │
+│  2. MUST use /superpowers:write-plan SECOND                  │
+│     - Before writing implementation code                     │
+│     - Creates detailed plan with file paths                  │
+│     - Includes code snippets and tests                       │
+│                                                              │
+│  3. MUST use /superpowers:execute-plan THIRD                 │
+│     - Executes in reviewed batches                           │
+│     - Can orchestrate sub-agents                             │
+│     - Pauses at checkpoints for approval                     │
+│                                                              │
+│  FOR DEBUGGING:                                              │
+│  └─► MUST use /superpowers:systematic-debugging              │
+│      - Reproduce → Isolate → Fix → Verify                    │
+│      - NO guessing at fixes                                  │
+│                                                              │
+│  NEVER skip straight to coding. EVER.                        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
 
+**Why This Rule Exists:**
+- Superpowers INTERCEPTS the urge to code immediately
+- Superpowers ENFORCES planning before action
+- Superpowers enables SUB-AGENT orchestration
+- Without this: assistant mode. With this: senior engineer mode.
+
+## Rule 13: Memory & Context Auto-Invocation
+
+**Use memory tools proactively to maintain context.**
+
+```
 AUTOMATICALLY USE Episodic Memory when:
 ├── User asks "what did we decide about X?"
 ├── Starting work on previously discussed feature
 ├── Debugging issue that may have been seen before
 ├── Need context from past sessions
 └── User references past conversation
+
+AUTOMATICALLY USE Memory MCP when:
+├── User states a preference ("I prefer X")
+├── Making architecture decisions (store rationale)
+├── Learning project-specific patterns
+├── Receiving feedback/corrections
+└── At session end (store progress)
 
 AUTOMATICALLY USE GSD when:
 ├── Starting a new project → /gsd:new-project
@@ -322,19 +364,26 @@ MEMORY DECISION MATRIX:
 └── Known project start → Query BOTH
 ```
 
-**Workflow Integration:**
-```
-NEW PROJECT:
-└─► /gsd:new-project → sets up context files
-└─► /superpowers:brainstorm → clarifies requirements
-└─► Memory MCP → stores decisions
+## Rule 14: Domain Skills Activation
 
-EXISTING PROJECT:
-└─► Episodic Memory → search past context
-└─► Memory MCP → recall preferences
-└─► /superpowers:write-plan → plan the work
-└─► /superpowers:execute-plan → do the work
+**Load domain skills for specialized work.**
+
 ```
+DOMAIN SKILLS (3 total):
+├── @security-review → Auth, payment, OWASP, encryption
+├── @devsecops → CI/CD, Docker, deployment, infrastructure
+└── @research → Technology decisions, best practices
+
+ACTIVATION:
+├── Security keywords → Load @security-review
+├── Deployment keywords → Load @devsecops
+├── Research keywords → Load @research
+
+AFTER SKILL ACTIVATION:
+└─► Use Superpowers workflows for implementation
+```
+
+**Note:** Planning, implementation, debugging, and testing are handled by Superpowers workflows, not separate skills.
 
 ---
 

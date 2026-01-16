@@ -31,19 +31,58 @@ Ship production-ready code for MVPs quickly with:
 - Minimal hallucination (verified via Strawberry)
 - Working implementations (tested via Playwright)
 - Remembered context (via Memory MCP + Episodic Memory)
+- **Enforced discipline (via Superpowers workflow)**
 
-## Integrated Workflow
+## ⚠️ MANDATORY WORKFLOW RULES
+
+**Superpowers is the PRIMARY workflow engine. You MUST use it for feature work.**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              ENFORCED WORKFLOW - NO EXCEPTIONS               │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  FOR ANY FEATURE/IMPLEMENTATION WORK:                        │
+│                                                              │
+│  1. MUST use /superpowers:brainstorm FIRST                   │
+│     └─► Clarifies requirements before ANY coding             │
+│     └─► Presents design for user approval                    │
+│                                                              │
+│  2. MUST use /superpowers:write-plan BEFORE coding           │
+│     └─► Creates detailed implementation plan                 │
+│     └─► Includes file paths, code snippets, tests            │
+│                                                              │
+│  3. MUST use /superpowers:execute-plan for implementation    │
+│     └─► Executes in batches with checkpoints                 │
+│     └─► Can orchestrate sub-agents for parallel work         │
+│                                                              │
+│  4. For debugging: MUST use /superpowers:systematic-debugging│
+│     └─► 4-step process: reproduce, isolate, fix, verify      │
+│                                                              │
+│  NEVER skip straight to coding. The discipline is mandatory. │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Why This Matters:**
+- Superpowers INTERCEPTS the urge to code immediately
+- Superpowers ENFORCES structured thinking before action
+- Superpowers enables SUB-AGENT orchestration for complex tasks
+- Without this workflow, you're just a coding assistant, not a senior engineer
+
+## Integrated Workflow (Superpowers-First)
 
 ```
 1. RECALL    → Search Episodic Memory for relevant past discussions
               → Query Memory MCP for user preferences
-2. CLARIFY   → Use /superpowers:brainstorm OR write short spec
+2. CLARIFY   → MUST use /superpowers:brainstorm (not optional)
 3. RESEARCH  → Use Tavily/Context7 to verify approaches
-4. PLAN      → Use Sequential Thinking for complex problems
-              → Use /superpowers:write-plan for implementation
-5. IMPLEMENT → Use /superpowers:execute-plan in batches
+4. PLAN      → Use Sequential Thinking for complex analysis
+              → MUST use /superpowers:write-plan for implementation
+5. IMPLEMENT → MUST use /superpowers:execute-plan in batches
+              → Orchestrate sub-agents for parallel work
               → Update STATE.md with progress
-6. VERIFY    → Test each change, run Strawberry on claims
+6. VERIFY    → Test each change, run Strawberry on security claims
 7. STORE     → Save decisions to Memory MCP
               → Commit changes (Episodic Memory auto-indexes)
 ```
@@ -208,8 +247,20 @@ Always provide:
 - **Expected output** for verification
 - **Rollback steps** for risky changes
 
+## Domain Skills (3 total)
+
+These skills provide domain expertise that Superpowers doesn't cover:
+
+| Skill | Domain | When to Use |
+|-------|--------|-------------|
+| @security-review | Security | Auth, payment, data, OWASP checks |
+| @devsecops | Infrastructure | CI/CD, Docker, deployment |
+| @research | Information | Technology decisions, best practices |
+
+**Note:** Planning, implementation, debugging, and testing are handled by Superpowers workflows, not separate skills.
+
 ---
 
 *Last updated: {{DATE}}*
 *Framework: Claude Code Super Setup*
-*Components: 9 MCP Servers • 2 Plugins • GSD Commands • 7 Skills • 3 Hooks*
+*Components: 9 MCP Servers • 2 Plugins • GSD Commands • 3 Domain Skills • 3 Hooks*

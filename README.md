@@ -19,21 +19,19 @@
 | [Sequential Thinking](https://github.com/modelcontextprotocol/servers) | Problem decomposition |
 | [Memory](https://github.com/modelcontextprotocol/servers) | Persistent memory across sessions |
 
-### 7 Skills (Auto-Activated via Hooks)
+### 3 Domain Skills (Auto-Activated via Hooks)
 | Skill | Purpose |
 |-------|---------|
-| `planning` | Feature/project planning before coding |
-| `implementation` | Code writing workflows |
-| `debugging` | Bug investigation methodology |
-| `testing` | TDD and test writing |
-| `research` | Information gathering |
-| `security-review` | OWASP checks, threat modeling |
-| `devsecops` | CI/CD, Docker, deployment |
+| `security-review` | OWASP checks, threat modeling, auth/payment security |
+| `devsecops` | CI/CD, Docker, Kubernetes, deployment |
+| `research` | Information gathering, technology decisions |
+
+**Note:** Planning, implementation, debugging, and testing are handled by **Superpowers workflows**, not separate skills. This enforces structured development.
 
 ### 3 Automation Hooks
-- **skill-activator.sh** - Forces skill evaluation (~84% activation rate)
+- **skill-activator.sh** - Routes to Superpowers workflows OR domain skills based on request
 - **quality-check.sh** - Suggests checks after file edits
-- **session-start.sh** - Shows project context at startup
+- **session-start.sh** - Shows project context and memory integration suggestions
 
 ### 2 Plugins (Automated via CLI!)
 | Plugin | Purpose |
@@ -125,11 +123,11 @@ legendary-claude-code-setup/
 │   └── 07-plugins.sh         # Superpowers, Episodic Memory
 │
 ├── config/claude/
-│   ├── CLAUDE.md             # Main context file
-│   ├── RULES.md              # 11 behavioral rules + security baselines
+│   ├── CLAUDE.md             # Main context file (mandatory Superpowers workflow)
+│   ├── RULES.md              # 14 behavioral rules + security baselines
 │   ├── PRINCIPLES.md         # Dev principles + Definition of Done
-│   ├── MCP/                  # 9 MCP guideline files
-│   ├── skills/               # 7 skill definitions
+│   ├── MCP/                  # 9 MCP + 2 Plugin guideline files
+│   ├── skills/               # 3 domain skills (security, devsecops, research)
 │   ├── hooks/                # 3 automation hooks
 │   ├── context/              # Project templates
 │   └── settings.json         # Hooks configuration
@@ -151,15 +149,18 @@ After running `bootstrap.sh`, you'll have:
 
 ```
 ~/.claude/
-├── CLAUDE.md                 # Auto-loaded every session
-├── RULES.md                  # Behavioral rules
+├── CLAUDE.md                 # Auto-loaded (mandatory Superpowers workflow)
+├── RULES.md                  # 14 behavioral rules
 ├── PRINCIPLES.md             # Development principles
-├── MCP/                      # MCP guidelines (9 files)
-├── skills/                   # Skills (7 directories)
+├── MCP/                      # MCP + Plugin guidelines (11 files)
+├── skills/                   # Domain skills (3 directories)
+│   ├── security-review/      # OWASP, threat modeling
+│   ├── devsecops/            # CI/CD, Docker, deployment
+│   └── research/             # Technology decisions
 ├── hooks/                    # Automation hooks (3 scripts)
 ├── context/                  # Project templates
 ├── commands/gsd/             # GSD slash commands
-├── plugins/                  # Installed plugins
+├── plugins/                  # Superpowers, Episodic Memory
 └── settings.json             # Hooks configuration
 ```
 
@@ -288,19 +289,37 @@ Rule 11 in RULES.md defines when each MCP should auto-invoke.
 
 ---
 
-## Skills System
+## Workflow Architecture
 
-Skills are automatically evaluated via hooks. Available skills:
+### Superpowers-First Workflow (MANDATORY)
 
-| Skill | Triggers On |
-|-------|-------------|
-| `planning` | New features, projects, multi-step tasks |
-| `implementation` | Writing, modifying, refactoring code |
-| `debugging` | Investigating bugs, errors |
-| `testing` | Writing tests, TDD |
-| `research` | Gathering information, decisions |
-| `security-review` | Auth, sensitive data, production prep |
-| `devsecops` | CI/CD, Docker, deployment |
+**For ANY feature/implementation work, Claude MUST follow this workflow:**
+
+```
+1. /superpowers:brainstorm    → Clarify requirements BEFORE coding
+2. /superpowers:write-plan    → Create detailed implementation plan
+3. /superpowers:execute-plan  → Execute in reviewed batches
+
+For debugging:
+/superpowers:systematic-debugging → Reproduce → Isolate → Fix → Verify
+```
+
+This is enforced via:
+- CLAUDE.md mandatory workflow rules
+- RULES.md Rule 12 (mandatory Superpowers)
+- skill-activator.sh hook (routes requests to Superpowers)
+
+### Domain Skills (3 total)
+
+Domain skills provide expertise that Superpowers doesn't cover:
+
+| Skill | Triggers On | Purpose |
+|-------|-------------|---------|
+| `security-review` | Auth, payment, encryption, OWASP | Security analysis |
+| `devsecops` | CI/CD, Docker, Kubernetes, deploy | Infrastructure |
+| `research` | Compare, evaluate, recommend | Technology decisions |
+
+**After loading a domain skill, Superpowers workflows are used for implementation.**
 
 ---
 

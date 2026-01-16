@@ -250,11 +250,22 @@ STORE to Memory MCP:
 └── Audit findings: "Fixed XSS in user profile"
 ```
 
-## Related Skills
+## Related Skills & Workflows
 
-- @implementation - For applying security fixes
-- @testing - For security test coverage
-- @devsecops - For security in CI/CD
+- @devsecops - For security in CI/CD pipelines
+- @research - For researching security best practices
+- /superpowers:execute-plan - For implementing security fixes systematically
+- /superpowers:systematic-debugging - For debugging security issues
+
+## Superpowers Integration
+
+For security fixes that require code changes:
+```
+1. Use /superpowers:write-plan with security focus
+2. Execute with /superpowers:execute-plan
+3. Verify EACH change with Strawberry
+4. Run security-focused tests
+```
 
 ---
 
