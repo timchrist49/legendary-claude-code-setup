@@ -25,6 +25,7 @@ SKIP_PYTHON=false
 SKIP_CLAUDE_CODE=false
 SKIP_MCP=false
 SKIP_TOOLS=false
+SKIP_PLUGINS=false
 INTERACTIVE=true
 FULL_AUTO=false
 
@@ -49,6 +50,7 @@ Options:
     --skip-claude-code      Skip Claude Code CLI installation
     --skip-mcp              Skip MCP server configuration
     --skip-tools            Skip additional tools (Ralph, GSD)
+    --skip-plugins          Skip plugin installation (Superpowers, Episodic Memory)
 
     --only-system-deps      Only install system dependencies
     --only-nodejs           Only install Node.js
@@ -56,6 +58,7 @@ Options:
     --only-claude-code      Only install Claude Code CLI
     --only-mcp              Only configure MCP servers
     --only-tools            Only install additional tools
+    --only-plugins          Only install plugins
 
 Examples:
     $0                      Interactive installation (recommended)
@@ -114,6 +117,10 @@ while [[ $# -gt 0 ]]; do
             SKIP_TOOLS=true
             shift
             ;;
+        --skip-plugins)
+            SKIP_PLUGINS=true
+            shift
+            ;;
         --only-system-deps)
             ONLY_MODE="system-deps"
             shift
@@ -136,6 +143,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --only-tools)
             ONLY_MODE="tools"
+            shift
+            ;;
+        --only-plugins)
+            ONLY_MODE="plugins"
             shift
             ;;
         *)
@@ -236,6 +247,10 @@ if [[ -n "$ONLY_MODE" ]]; then
             log_step "Running only: Additional Tools"
             bash "$SCRIPTS_DIR/06-tools.sh"
             ;;
+        plugins)
+            log_step "Running only: Plugins"
+            bash "$SCRIPTS_DIR/07-plugins.sh"
+            ;;
     esac
     log_success "Done!"
     exit 0
@@ -251,8 +266,9 @@ if $INTERACTIVE && ! $FULL_AUTO; then
     [[ "$SKIP_NODEJS" != "true" ]] && echo "  • Node.js 20.x"
     [[ "$SKIP_PYTHON" != "true" ]] && echo "  • Python 3 with pip"
     [[ "$SKIP_CLAUDE_CODE" != "true" ]] && echo "  • Claude Code CLI"
-    [[ "$SKIP_MCP" != "true" ]] && echo "  • MCP Servers (Context7, Browserbase, Playwright, Strawberry)"
+    [[ "$SKIP_MCP" != "true" ]] && echo "  • MCP Servers (Context7, Tavily, Browserbase, Playwright, Strawberry, GitHub, E2B, Sequential Thinking, Memory)"
     [[ "$SKIP_TOOLS" != "true" ]] && echo "  • Additional tools (Ralph, GSD)"
+    [[ "$SKIP_PLUGINS" != "true" ]] && echo "  • Plugins (Superpowers, Episodic Memory)"
     echo ""
 
     if ! confirm "Proceed with installation?" "y"; then
@@ -265,7 +281,7 @@ fi
 # Phase 1: System Dependencies (requires root)
 # ============================================================================
 if [[ "$SKIP_SYSTEM_DEPS" != "true" ]]; then
-    log_step "Phase 1/6: System Dependencies"
+    log_step "Phase 1/7: System Dependencies"
 
     if $IS_ROOT; then
         bash "$SCRIPTS_DIR/01-system-deps.sh"
@@ -278,7 +294,7 @@ fi
 # Phase 2: Node.js (requires root)
 # ============================================================================
 if [[ "$SKIP_NODEJS" != "true" ]]; then
-    log_step "Phase 2/6: Node.js"
+    log_step "Phase 2/7: Node.js"
 
     if $IS_ROOT; then
         bash "$SCRIPTS_DIR/02-nodejs.sh"
@@ -291,7 +307,7 @@ fi
 # Phase 3: Python (requires root)
 # ============================================================================
 if [[ "$SKIP_PYTHON" != "true" ]]; then
-    log_step "Phase 3/6: Python"
+    log_step "Phase 3/7: Python"
 
     if $IS_ROOT; then
         bash "$SCRIPTS_DIR/03-python.sh"
@@ -304,7 +320,7 @@ fi
 # Phase 4: Claude Code CLI (user space)
 # ============================================================================
 if [[ "$SKIP_CLAUDE_CODE" != "true" ]]; then
-    log_step "Phase 4/6: Claude Code CLI"
+    log_step "Phase 4/7: Claude Code CLI"
 
     if $IS_ROOT; then
         # If running as root with sudo, run as the actual user
@@ -322,7 +338,7 @@ fi
 # Phase 5: MCP Servers (user space)
 # ============================================================================
 if [[ "$SKIP_MCP" != "true" ]]; then
-    log_step "Phase 5/6: MCP Servers"
+    log_step "Phase 5/7: MCP Servers"
 
     if $IS_ROOT; then
         if [[ -n "${SUDO_USER:-}" ]]; then
@@ -339,7 +355,7 @@ fi
 # Phase 6: Additional Tools (user space)
 # ============================================================================
 if [[ "$SKIP_TOOLS" != "true" ]]; then
-    log_step "Phase 6/6: Additional Tools"
+    log_step "Phase 6/7: Additional Tools"
 
     if $IS_ROOT; then
         if [[ -n "${SUDO_USER:-}" ]]; then
@@ -349,6 +365,23 @@ if [[ "$SKIP_TOOLS" != "true" ]]; then
         fi
     else
         bash "$SCRIPTS_DIR/06-tools.sh"
+    fi
+fi
+
+# ============================================================================
+# Phase 7: Plugins (user space)
+# ============================================================================
+if [[ "$SKIP_PLUGINS" != "true" ]]; then
+    log_step "Phase 7/7: Plugins (Superpowers, Episodic Memory)"
+
+    if $IS_ROOT; then
+        if [[ -n "${SUDO_USER:-}" ]]; then
+            sudo -u "$SUDO_USER" bash "$SCRIPTS_DIR/07-plugins.sh"
+        else
+            bash "$SCRIPTS_DIR/07-plugins.sh"
+        fi
+    else
+        bash "$SCRIPTS_DIR/07-plugins.sh"
     fi
 fi
 
@@ -476,10 +509,11 @@ echo ""
 [[ "$SKIP_NODEJS" != "true" ]] && echo "  ✓ Node.js $(node -v 2>/dev/null || echo '(restart shell)')"
 [[ "$SKIP_PYTHON" != "true" ]] && echo "  ✓ Python $(python3 --version 2>/dev/null | awk '{print $2}' || echo '3.x')"
 [[ "$SKIP_CLAUDE_CODE" != "true" ]] && echo "  ✓ Claude Code CLI"
-[[ "$SKIP_MCP" != "true" ]] && echo "  ✓ MCP Servers (Context7, Tavily, Browserbase, Playwright, Strawberry, GitHub, E2B, Sequential Thinking)"
+[[ "$SKIP_MCP" != "true" ]] && echo "  ✓ MCP Servers (Context7, Tavily, Browserbase, Playwright, Strawberry, GitHub, E2B, Sequential Thinking, Memory)"
 [[ "$SKIP_TOOLS" != "true" ]] && echo "  ✓ Additional tools (Ralph, GSD)"
+[[ "$SKIP_PLUGINS" != "true" ]] && echo "  ✓ Plugins (Superpowers, Episodic Memory)"
 echo "  ✓ Claude configuration (CLAUDE.md, RULES.md, PRINCIPLES.md)"
-echo "  ✓ MCP guidelines (8 files)"
+echo "  ✓ MCP guidelines (9 files)"
 echo "  ✓ Skills (planning, implementation, debugging, testing, research, security-review, devsecops)"
 echo "  ✓ Hooks (skill-activator, quality-check, session-start)"
 echo "  ✓ Context templates (PROJECT.md, STATE.md, ROADMAP.md)"
@@ -493,16 +527,20 @@ echo "  2. ${BOLD}Authenticate Claude Code:${NC}"
 echo "     $ claude"
 echo "     (Follow prompts to log in with subscription or API key)"
 echo ""
-echo "  3. ${BOLD}Install plugins inside Claude Code:${NC}"
-echo "     /plugin marketplace add obra/superpowers-marketplace"
-echo "     /plugin install superpowers@superpowers-marketplace"
-echo "     /plugin install episodic-memory@superpowers-marketplace"
+echo "  3. ${BOLD}Verify installation:${NC}"
+echo "     $ claude mcp list         # Check MCP servers (9 total)"
+echo "     $ claude plugin list      # Check plugins (Superpowers, Episodic Memory)"
 echo ""
-echo "  4. ${BOLD}Verify MCP servers:${NC}"
-echo "     $ claude mcp list"
+echo "  4. ${BOLD}Restart Claude Code${NC} to activate plugins"
 echo ""
 echo "  5. ${BOLD}For headless servers, start Xvfb:${NC}"
 echo "     $ ~/.local/bin/start-xvfb.sh"
+echo ""
+echo -e "${GREEN}${BOLD}Everything is now automated!${NC}"
+echo "  • 9 MCP servers installed"
+echo "  • 2 Plugins installed (Superpowers, Episodic Memory)"
+echo "  • GSD slash commands (/gsd:*)"
+echo "  • Ralph autonomous loop (external)"
 echo ""
 
 echo -e "${CYAN}Documentation:${NC}"

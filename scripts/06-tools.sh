@@ -23,14 +23,39 @@ ensure_dir "$TOOLS_DIR"
 log_step "Installing Get Shit Done (GSD)"
 log_info "GSD provides spec-driven, context-managed workflows"
 log_info "Repository: https://github.com/glittercowboy/get-shit-done"
+log_info ""
+log_info "GSD provides slash commands:"
+log_info "  - /gsd:help         Show help"
+log_info "  - /gsd:new-project  Start a new project"
+log_info "  - /gsd:plan         Create implementation plan"
+log_info "  - /gsd:execute      Execute the plan"
 
-log_substep "Running GSD installer..."
-npx get-shit-done-cc 2>/dev/null || {
-    log_warn "GSD installation via npx may have prompted for input"
-    log_info "If it didn't complete, run manually: npx get-shit-done-cc"
-}
+# Check if GSD commands already exist
+if [[ -d "$HOME/.claude/commands/gsd" ]]; then
+    log_info "GSD commands already installed at ~/.claude/commands/gsd"
+    log_substep "Updating to latest version..."
+fi
 
-log_success "GSD installation initiated"
+log_substep "Running GSD installer (non-interactive)..."
+# Use --global flag for non-interactive installation
+if npx get-shit-done-cc@latest --global 2>/dev/null; then
+    log_success "GSD installed globally to ~/.claude/commands/gsd/"
+else
+    # Fallback: try without --global (older versions)
+    log_warn "Trying alternative installation method..."
+    if npx get-shit-done-cc 2>/dev/null <<< "y"; then
+        log_success "GSD installed"
+    else
+        log_warn "GSD automatic installation may have failed"
+        log_info "Manual install: npx get-shit-done-cc"
+    fi
+fi
+
+# Verify installation
+if [[ -d "$HOME/.claude/commands/gsd" ]]; then
+    gsd_commands=$(ls "$HOME/.claude/commands/gsd/" 2>/dev/null | wc -l)
+    log_success "GSD verified: $gsd_commands slash commands installed"
+fi
 
 # ============================================================================
 # Ralph (Autonomous Dev Loop)
@@ -38,27 +63,49 @@ log_success "GSD installation initiated"
 log_step "Installing Ralph"
 log_info "Ralph enables continuous autonomous development cycles"
 log_info "Repository: https://github.com/frankbria/ralph-claude-code"
+log_info ""
+log_info "Ralph is an EXTERNAL bash loop that runs OUTSIDE Claude Code:"
+log_info "  - ralph            Start autonomous development loop"
+log_info "  - ralph-monitor    Live monitoring dashboard"
+log_info "  - ralph-setup      Initialize a new Ralph project"
 
 RALPH_DIR="$TOOLS_DIR/ralph-claude-code"
 
 if [[ -d "$RALPH_DIR" ]]; then
     log_info "Ralph directory already exists, updating..."
     cd "$RALPH_DIR"
-    git pull origin main 2>/dev/null || git pull
+    git pull origin main 2>/dev/null || git pull 2>/dev/null || true
 else
     log_substep "Cloning Ralph repository..."
-    git clone https://github.com/frankbria/ralph-claude-code.git "$RALPH_DIR"
-    cd "$RALPH_DIR"
+    if git clone https://github.com/frankbria/ralph-claude-code.git "$RALPH_DIR" 2>/dev/null; then
+        log_success "Ralph repository cloned"
+    else
+        log_warn "Failed to clone Ralph repository"
+        log_info "Manual: git clone https://github.com/frankbria/ralph-claude-code.git $RALPH_DIR"
+    fi
 fi
 
-if [[ -f "install.sh" ]]; then
-    log_substep "Running Ralph installer..."
-    chmod +x install.sh
-    ./install.sh
-    log_success "Ralph installed"
-else
-    log_warn "Ralph install.sh not found, manual setup may be required"
-    log_info "Check: $RALPH_DIR"
+cd "$RALPH_DIR" 2>/dev/null || true
+
+# Make scripts executable
+if [[ -d "$RALPH_DIR" ]]; then
+    log_substep "Setting up Ralph scripts..."
+
+    # Find and make main scripts executable
+    for script in ralph_loop.sh ralph_monitor.sh setup.sh ralph.sh; do
+        if [[ -f "$RALPH_DIR/$script" ]]; then
+            chmod +x "$RALPH_DIR/$script"
+        fi
+    done
+
+    # Try running installer if it exists
+    if [[ -f "$RALPH_DIR/install.sh" ]]; then
+        log_substep "Running Ralph installer..."
+        chmod +x "$RALPH_DIR/install.sh"
+        "$RALPH_DIR/install.sh" 2>/dev/null || true
+    fi
+
+    log_success "Ralph scripts configured"
 fi
 
 cd "$PROJECT_ROOT"
@@ -99,15 +146,27 @@ print_separator
 echo -e "${GREEN}Additional tools installed:${NC}"
 echo ""
 echo "  ${CYAN}Get Shit Done (GSD)${NC}"
-echo "    - Provides spec-driven workflows"
-echo "    - Uses: /gsd commands inside Claude Code"
+echo "    - Provides spec-driven workflows with slash commands"
+echo "    - Location: ~/.claude/commands/gsd/"
+echo "    - Commands (inside Claude Code):"
+echo "        /gsd:help         - Show help"
+echo "        /gsd:new-project  - Initialize new project"
+echo "        /gsd:plan         - Create implementation plan"
+echo "        /gsd:execute      - Execute the plan"
 echo ""
 echo "  ${CYAN}Ralph${NC}"
-echo "    - Autonomous development loops"
+echo "    - Autonomous development loops (runs OUTSIDE Claude Code)"
 echo "    - Location: $RALPH_DIR"
 echo "    - Wrapper: $RALPH_WRAPPER"
+echo "    - Commands (in terminal):"
+echo "        ralph             - Start autonomous loop"
+echo "        ralph-monitor     - Live monitoring dashboard"
 echo ""
-echo -e "${YELLOW}Documentation:${NC}"
+echo -e "${YELLOW}Key Difference:${NC}"
+echo "  - GSD = Slash commands INSIDE Claude Code"
+echo "  - Ralph = Bash loop OUTSIDE Claude Code that invokes Claude repeatedly"
+echo ""
+echo -e "${CYAN}Documentation:${NC}"
 echo "  - GSD: https://github.com/glittercowboy/get-shit-done"
 echo "  - Ralph: https://github.com/frankbria/ralph-claude-code"
 print_separator

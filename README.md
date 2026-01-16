@@ -35,9 +35,13 @@
 - **quality-check.sh** - Suggests checks after file edits
 - **session-start.sh** - Shows project context at startup
 
-### Plugins (Manual Install)
-- [Superpowers](https://github.com/obra/superpowers) - Structured development workflow
-- [Episodic Memory](https://github.com/obra/episodic-memory) - Cross-session memory
+### 2 Plugins (Automated via CLI!)
+| Plugin | Purpose |
+|--------|---------|
+| [Superpowers](https://github.com/obra/superpowers) | Structured development workflow, `/superpowers:*` commands |
+| [Episodic Memory](https://github.com/obra/episodic-memory) | Semantic search across past conversations |
+
+**Key Discovery:** Plugins CAN be automated via `claude plugin` CLI command!
 
 ### Additional Tools
 - [Ralph](https://github.com/frankbria/ralph-claude-code) - Autonomous dev loops
@@ -85,16 +89,7 @@ For non-interactive installation:
 ./bootstrap.sh -y
 ```
 
-### 4. Install Plugins (Inside Claude Code)
-
-After bootstrap completes, start Claude Code and run:
-```
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
-/plugin install episodic-memory@superpowers-marketplace
-```
-
-### 5. Verify Installation
+### 4. Verify Installation
 
 ```bash
 ./verify.sh
@@ -125,8 +120,9 @@ legendary-claude-code-setup/
 │   ├── 02-nodejs.sh          # Node.js 20.x
 │   ├── 03-python.sh          # Python 3 + pip
 │   ├── 04-claude-code.sh     # Claude Code CLI
-│   ├── 05-mcp-servers.sh     # 8 MCP servers
-│   └── 06-tools.sh           # Ralph, GSD
+│   ├── 05-mcp-servers.sh     # 9 MCP servers
+│   ├── 06-tools.sh           # Ralph, GSD
+│   └── 07-plugins.sh         # Superpowers, Episodic Memory
 │
 ├── config/claude/
 │   ├── CLAUDE.md             # Main context file
@@ -162,6 +158,8 @@ After running `bootstrap.sh`, you'll have:
 ├── skills/                   # Skills (7 directories)
 ├── hooks/                    # Automation hooks (3 scripts)
 ├── context/                  # Project templates
+├── commands/gsd/             # GSD slash commands
+├── plugins/                  # Installed plugins
 └── settings.json             # Hooks configuration
 ```
 
@@ -263,10 +261,12 @@ Memory stores data in `~/.claude-memory/`.
 ### Fully Automated (No Action Required)
 | Feature | How It Works |
 |---------|--------------|
+| 9 MCP Servers | Installed via `claude mcp add` commands |
+| 2 Plugins | Installed via `claude plugin install` commands |
+| GSD Slash Commands | Installed via `npx get-shit-done-cc --global` |
 | Skill Evaluation | Hook runs on every prompt, evaluates which skill applies |
 | Session Context | Hook loads PROJECT.md, STATE.md at session start |
 | Quality Suggestions | Hook suggests checks after file edits |
-| MCP Availability | All 9 MCP servers are installed and available |
 
 ### Semi-Automated (Context-Triggered)
 | Feature | When It Runs |
@@ -276,16 +276,15 @@ Memory stores data in `~/.claude-memory/`.
 | Memory | Claude stores preferences you mention |
 | Tavily/Context7 | Claude uses for unfamiliar libraries |
 | E2B | Claude uses for untrusted code execution |
+| Episodic Memory | Searches past conversations when relevant |
 
 Rule 11 in RULES.md defines when each MCP should auto-invoke.
 
-### Manual Installation Required
-| Feature | How to Install |
-|---------|----------------|
-| Superpowers plugin | `/plugin marketplace add obra/superpowers-marketplace` |
-| Episodic Memory plugin | `/plugin install episodic-memory@superpowers-marketplace` |
-| Ralph (external tool) | Bash wrapper script, runs outside Claude Code |
-| GSD (external tool) | Installed via npx, provides `/gsd:*` commands |
+### External Tools (Runs Outside Claude Code)
+| Feature | How It Works |
+|---------|--------------|
+| Ralph | Bash loop that invokes Claude repeatedly until task complete |
+| ralph-monitor | Live monitoring dashboard for Ralph loops |
 
 ---
 

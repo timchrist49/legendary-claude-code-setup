@@ -205,6 +205,54 @@ else
 fi
 
 # ============================================================================
+# Plugins
+# ============================================================================
+log_step "Checking Plugins"
+
+if command_exists claude; then
+    plugin_list=$(claude plugin list 2>/dev/null || echo "")
+
+    if echo "$plugin_list" | grep -qi "superpowers"; then
+        check_pass "Superpowers plugin installed"
+    else
+        check_warn "Superpowers plugin not found"
+    fi
+
+    if echo "$plugin_list" | grep -qi "episodic-memory"; then
+        check_pass "Episodic Memory plugin installed"
+    else
+        check_warn "Episodic Memory plugin not found"
+    fi
+
+    # Check marketplace
+    marketplace_list=$(claude plugin marketplace list 2>/dev/null || echo "")
+    if echo "$marketplace_list" | grep -qi "superpowers-marketplace"; then
+        check_pass "Superpowers marketplace configured"
+    else
+        check_warn "Superpowers marketplace not configured"
+    fi
+else
+    check_warn "Cannot check plugins (Claude CLI not available)"
+fi
+
+# ============================================================================
+# GSD Slash Commands
+# ============================================================================
+log_step "Checking GSD Slash Commands"
+
+GSD_DIR="$HOME/.claude/commands/gsd"
+if [[ -d "$GSD_DIR" ]]; then
+    gsd_count=$(find "$GSD_DIR" -name "*.md" 2>/dev/null | wc -l)
+    if [[ "$gsd_count" -gt 0 ]]; then
+        check_pass "GSD slash commands installed ($gsd_count commands)"
+    else
+        check_warn "GSD directory exists but no commands found"
+    fi
+else
+    check_warn "GSD commands not found (run: npx get-shit-done-cc --global)"
+fi
+
+# ============================================================================
 # Configuration Files
 # ============================================================================
 log_step "Checking Configuration Files"
