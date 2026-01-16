@@ -312,14 +312,35 @@ else
     check_warn "PRINCIPLES.md not found"
 fi
 
-# Check skills directory
+# Check skills directory - should have exactly 3 domain skills
 SKILLS_DIR="$HOME/.claude/skills"
 if [[ -d "$SKILLS_DIR" ]]; then
     skill_count=$(find "$SKILLS_DIR" -name "SKILL.md" 2>/dev/null | wc -l)
-    if [[ "$skill_count" -gt 0 ]]; then
-        check_pass "Skills installed ($skill_count skills found)"
+    if [[ "$skill_count" -eq 3 ]]; then
+        check_pass "Domain skills installed (3 skills: security-review, devsecops, research)"
+    elif [[ "$skill_count" -gt 0 ]]; then
+        check_warn "Expected 3 domain skills, found $skill_count"
     else
         check_warn "Skills directory exists but no SKILL.md files found"
+    fi
+
+    # Verify specific domain skills exist
+    if [[ -f "$SKILLS_DIR/security-review/SKILL.md" ]]; then
+        check_pass "security-review skill exists"
+    else
+        check_warn "security-review skill missing"
+    fi
+
+    if [[ -f "$SKILLS_DIR/devsecops/SKILL.md" ]]; then
+        check_pass "devsecops skill exists"
+    else
+        check_warn "devsecops skill missing"
+    fi
+
+    if [[ -f "$SKILLS_DIR/research/SKILL.md" ]]; then
+        check_pass "research skill exists"
+    else
+        check_warn "research skill missing"
     fi
 else
     check_warn "Skills directory not found"

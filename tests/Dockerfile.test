@@ -1,0 +1,49 @@
+# Dockerfile.test - Test Claude Code Super Setup in fresh environment
+#
+# Usage:
+#   docker build -f tests/Dockerfile.test -t claude-setup-test .
+#   docker run --rm claude-setup-test
+#
+# For interactive testing:
+#   docker run -it --rm claude-setup-test /bin/bash
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install minimal dependencies for bootstrap
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    sudo \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user (simulates real user environment)
+RUN useradd -m -s /bin/bash testuser && \
+    echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Switch to non-root user
+USER testuser
+WORKDIR /home/testuser
+
+# Copy the project files
+COPY --chown=testuser:testuser . /home/testuser/claude-code-super-setup
+
+WORKDIR /home/testuser/claude-code-super-setup
+
+# Create a minimal .env file for testing (empty API keys)
+# This allows bootstrap to run without actual API keys
+RUN cp .env.example .env && \
+    sed -i 's/your_context7_api_key_here/test_key/' .env && \
+    sed -i 's/your_tavily_api_key_here/test_key/' .env
+
+# Run bootstrap in non-interactive mode
+# Note: Some components will fail without real API keys, but we can test structure
+RUN chmod +x bootstrap.sh && \
+    ./bootstrap.sh -y --skip-plugins 2>&1 || true
+
+# The actual test - run verification
+CMD ["bash", "-c", "./verify.sh && echo '=== Bootstrap Test Complete ===' && tests/test-hooks.sh"]
