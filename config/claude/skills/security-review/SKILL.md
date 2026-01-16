@@ -198,10 +198,64 @@ Create security report:
 - [ ] Security team notified if needed
 ```
 
-## Tools to Use
+## Tool Integration
 
-- **Strawberry MCP**: Verify security claims
-- **Context7**: OWASP guidelines, framework security docs
-- **Tavily**: Current CVEs, security advisories
-- **E2B**: Test exploits safely in sandbox
-- **GitHub MCP**: Check for security advisories on deps
+**Use these tools automatically during security review:**
+
+```
+RESEARCH PHASE:
+├── Episodic Memory → /search-conversations "security review"
+│   └─► Past security decisions and patterns
+├── Tavily → Current CVEs, security advisories
+│   └─► "[library name] vulnerability 2025"
+├── Context7 → OWASP guidelines, framework security docs
+│   └─► Official security best practices
+├── GitHub MCP → Check for security advisories on deps
+│   └─► Dependabot alerts, security tab
+
+VERIFICATION PHASE:
+├── Strawberry → Verify security claims
+│   └─► CRITICAL: Use for ALL auth/payment/data code
+├── Sequential Thinking → Complex threat modeling
+│   └─► Multi-vector attack analysis
+├── E2B → Test exploits safely in sandbox
+│   └─► Never test on production data
+
+DOCUMENTATION PHASE:
+├── Memory MCP → Store security decisions
+│   └─► "Chose bcrypt over argon2 because..."
+├── Update security documentation
+└── Create security-focused tests
+```
+
+**Mandatory Strawberry Verification:**
+```
+ALWAYS use Strawberry for:
+├── Authentication implementations
+├── Authorization logic
+├── Payment processing
+├── Data encryption
+├── Session management
+├── API security
+├── Input validation claims
+└── Security configuration changes
+```
+
+**Security Memory Pattern:**
+```
+STORE to Memory MCP:
+├── Security decisions: "JWT expiry set to 15 minutes"
+├── Threat models: "Identified CSRF risk in forms"
+├── Mitigations applied: "Added CSRF token validation"
+└── Audit findings: "Fixed XSS in user profile"
+```
+
+## Related Skills
+
+- @implementation - For applying security fixes
+- @testing - For security test coverage
+- @devsecops - For security in CI/CD
+
+---
+
+*Security is non-negotiable. Verify all security-related claims with Strawberry.*

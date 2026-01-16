@@ -233,6 +233,47 @@ ESCALATION:
 5. Consider if it's environment-specific
 ```
 
+## Tool Integration
+
+**Use these tools automatically during debugging:**
+
+```
+REPRODUCE PHASE:
+├── Playwright → Automate reproduction steps
+├── E2B → Reproduce safely in sandbox
+└── Read error logs and stack traces
+
+ISOLATE PHASE:
+├── Episodic Memory → /search-conversations "similar error"
+├── Episodic Memory → /search-conversations "bug fix [component]"
+└── Check if this issue was solved before
+
+DIAGNOSE PHASE:
+├── Context7 → Check API documentation for correct usage
+├── Tavily → Search for known issues, solutions
+├── Strawberry → Verify your diagnosis is correct
+└── Sequential Thinking → Complex multi-cause issues
+
+FIX PHASE:
+├── E2B → Test fix in sandbox before applying
+├── Playwright → Verify fix with automated test
+└── Run existing test suite
+
+PREVENT PHASE:
+├── Memory MCP → Store bug pattern and solution
+├── Create regression test
+└── Document in code comments if non-obvious
+```
+
+**Past Issue Search Pattern:**
+```
+1. Error: "Cannot read property 'user' of undefined"
+2. /search-conversations "undefined user error"
+3. Find past solution: "Added null check in AuthContext"
+4. Apply similar fix
+5. Store to Memory MCP: "Common issue: user object null before auth complete"
+```
+
 ## Related Skills
 
 - @implementation - For making the fix

@@ -161,6 +161,41 @@ After planning, offer execution choice:
 3. Save for later - Plan saved to docs/plans/"
 ```
 
+## Tool Integration
+
+**Use these tools automatically during planning:**
+
+```
+CLARIFY PHASE:
+├── /superpowers:brainstorm → Structured requirement gathering
+├── Episodic Memory → Search past discussions: /search-conversations "feature name"
+└── Memory MCP → Recall user preferences: query open_nodes
+
+RESEARCH PHASE:
+├── Context7 → Official library/framework documentation
+├── Tavily → Current best practices, comparisons
+└── Episodic Memory → Past decisions: /search-conversations "architecture"
+
+DESIGN PHASE:
+├── Sequential Thinking → Complex architecture (>3 components)
+├── /superpowers:write-plan → Structured implementation plan
+└── Strawberry → Verify high-stakes plans
+
+DOCUMENT PHASE:
+├── Memory MCP → Store decisions: create_entities, create_relations
+└── /superpowers:write-plan → Save plan to markdown
+```
+
+**Workflow Example:**
+```
+1. User: "Let's build a payment system"
+2. /search-conversations "payment" → Check past discussions
+3. /superpowers:brainstorm → Clarify requirements
+4. Sequential Thinking → Plan architecture
+5. /superpowers:write-plan → Create implementation plan
+6. Memory MCP → Store decisions for future sessions
+```
+
 ## Related Skills
 
 - @implementation - For executing the plan

@@ -230,6 +230,60 @@ AVOID:
 ├── Assuming without verifying
 ```
 
+## Tool Integration
+
+**Use these tools automatically for research:**
+
+```
+PAST CONTEXT:
+├── Episodic Memory → /search-conversations "topic"
+│   └─► What did we discuss/decide before?
+├── Memory MCP → query open_nodes
+│   └─► What preferences/decisions are stored?
+
+CURRENT INFORMATION:
+├── Context7 → Official documentation
+│   └─► Resolve library URLs first
+├── Tavily → Web search for current info
+│   └─► "best [X] 2025", comparisons
+├── Browserbase → Interactive exploration
+│   └─► Complex sites, JavaScript-heavy pages
+
+VERIFICATION:
+├── Strawberry → Verify conclusions
+│   └─► High-stakes decisions
+├── Sequential Thinking → Complex analysis
+│   └─► Multi-factor decisions
+
+STORAGE:
+├── Memory MCP → Store decisions with rationale
+│   └─► create_entities + create_relations
+```
+
+**Research + Memory Pattern:**
+```
+1. User: "What library should we use for auth?"
+2. /search-conversations "authentication" → Past discussions
+3. Memory MCP → Recall: "prefers jose for JWT"
+4. Tavily → Current best practices
+5. Context7 → Library documentation
+6. Sequential Thinking → Compare options
+7. Strawberry → Verify recommendation
+8. Memory MCP → Store decision: "chose next-auth because..."
+```
+
+**Decision Storage Format:**
+```
+Entity: DECISION
+├── Name: "Auth Library Selection"
+├── Type: architecture_decision
+├── Observations:
+│   ├── "Chose next-auth for authentication"
+│   ├── "Reason: best Next.js integration"
+│   ├── "Alternative considered: jose"
+│   └── "Date: 2025-01-15"
+```
+
 ## Related Skills
 
 - @planning - For acting on research

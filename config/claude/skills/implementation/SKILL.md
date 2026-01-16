@@ -190,6 +190,38 @@ BATCH LIMITS:
 ├── Verify between batches
 ```
 
+## Tool Integration
+
+**Use these tools automatically during implementation:**
+
+```
+BEFORE CODING:
+├── Memory MCP → Recall preferences: "prefers TypeScript", "uses Tailwind"
+├── Episodic Memory → Past patterns: /search-conversations "similar feature"
+└── Context7 → API documentation for libraries
+
+DURING CODING:
+├── /superpowers:execute-plan → Structured batch execution
+├── E2B → Test risky operations in sandbox first
+└── Playwright → Verify UI behavior
+
+AFTER CODING:
+├── Strawberry → Verify security-related code
+├── Memory MCP → Store new patterns/learnings
+└── GitHub MCP → Create PR, check CI status
+```
+
+**Execution Pattern with Superpowers:**
+```
+1. User approves plan
+2. /superpowers:execute-plan → Start execution
+3. Work through tasks in batches
+4. Pause at checkpoints for review
+5. Run tests between batches
+6. Update plan status as tasks complete
+7. Commit after each successful batch
+```
+
 ## Related Skills
 
 - @planning - For creating the implementation plan

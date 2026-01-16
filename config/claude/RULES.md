@@ -289,6 +289,53 @@ AUTOMATICALLY USE E2B sandbox when:
 
 **Default to Action:** When a scenario matches auto-invocation criteria, use the tool first, don't ask for permission. The user expects proactive tool usage.
 
+## Rule 12: Plugin & Slash Command Auto-Invocation
+
+**Use plugins and slash commands proactively for structured workflows.**
+
+```
+AUTOMATICALLY USE Superpowers when:
+├── Planning a new feature → /superpowers:brainstorm
+├── Creating implementation plan → /superpowers:write-plan
+├── Executing multi-step work → /superpowers:execute-plan
+├── Starting complex task → brainstorm first
+└── Need structured approach → use Superpowers workflow
+
+AUTOMATICALLY USE Episodic Memory when:
+├── User asks "what did we decide about X?"
+├── Starting work on previously discussed feature
+├── Debugging issue that may have been seen before
+├── Need context from past sessions
+└── User references past conversation
+
+AUTOMATICALLY USE GSD when:
+├── Starting a new project → /gsd:new-project
+├── Need to set up project context files
+├── Working with PROJECT.md, STATE.md, ROADMAP.md
+└── Following spec-driven development
+
+MEMORY DECISION MATRIX:
+├── STORE new info → Memory MCP (create_entities)
+├── FIND old info → Episodic Memory (/search-conversations)
+├── Preferences → Memory MCP
+├── Past discussions → Episodic Memory
+└── Known project start → Query BOTH
+```
+
+**Workflow Integration:**
+```
+NEW PROJECT:
+└─► /gsd:new-project → sets up context files
+└─► /superpowers:brainstorm → clarifies requirements
+└─► Memory MCP → stores decisions
+
+EXISTING PROJECT:
+└─► Episodic Memory → search past context
+└─► Memory MCP → recall preferences
+└─► /superpowers:write-plan → plan the work
+└─► /superpowers:execute-plan → do the work
+```
+
 ---
 
 *These rules are non-negotiable. Violating them degrades output quality.*

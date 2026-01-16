@@ -226,6 +226,55 @@ test('should call API with correct params', () => {
 });
 ```
 
+## Tool Integration
+
+**Use these tools automatically for testing:**
+
+```
+TEST PLANNING:
+├── Episodic Memory → /search-conversations "test patterns"
+├── Memory MCP → Recall preferred testing frameworks
+├── Context7 → Testing library documentation
+└── Sequential Thinking → Complex test architecture
+
+TEST EXECUTION:
+├── Playwright → E2E and browser testing
+├── E2B → Run tests in isolated sandbox
+├── GitHub MCP → Check CI test results
+└── Bash → Local test execution
+
+TEST VERIFICATION:
+├── Playwright → Automated UI verification
+├── Browserbase → Cloud browser testing
+└── E2B → Test potentially destructive operations
+```
+
+**E2E Testing with Playwright:**
+```
+WHEN TO USE PLAYWRIGHT:
+├── Testing user flows end-to-end
+├── Verifying UI behavior
+├── Regression testing
+├── Visual testing
+└── Cross-browser testing
+
+PATTERN:
+1. Write Playwright test
+2. Run locally to verify
+3. Add to CI pipeline
+4. Store patterns to Memory MCP
+```
+
+**Sandbox Testing with E2B:**
+```
+WHEN TO USE E2B:
+├── Testing database migrations
+├── Running destructive operations
+├── Testing untrusted code
+├── Validating build processes
+└── Testing deployment scripts
+```
+
 ## Related Skills
 
 - @implementation - For writing the code being tested

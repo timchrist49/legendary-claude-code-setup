@@ -341,9 +341,71 @@ app.get('/health', async (req, res) => {
 });
 ```
 
-## Tools to Use
+## Tool Integration
 
-- **GitHub MCP**: Create PRs, check CI status, manage releases
-- **E2B**: Test deployment scripts safely
-- **Tavily**: Research best practices, check for issues
-- **Context7**: Docker, K8s, CI tool documentation
+**Use these tools automatically for DevSecOps:**
+
+```
+CI/CD SETUP:
+├── Context7 → GitHub Actions, Docker, K8s documentation
+├── Tavily → Current best practices, security advisories
+├── Episodic Memory → /search-conversations "CI/CD setup"
+│   └─► Past pipeline configurations
+├── Memory MCP → Recall deployment preferences
+│   └─► "uses GitHub Actions", "deploys to Vercel"
+
+DEPLOYMENT:
+├── E2B → Test deployment scripts safely
+│   └─► Run migrations, build processes in sandbox
+├── GitHub MCP → Create PRs, check CI status
+│   └─► Monitor deployment pipeline
+├── Strawberry → Verify production configurations
+│   └─► Security settings, environment variables
+
+MONITORING:
+├── Playwright → Health check verification
+│   └─► Automated smoke tests
+├── Tavily → Search for known issues
+│   └─► "[service] outage", monitoring tools
+├── GitHub MCP → Check for alerts, issues
+│   └─► Dependabot, security alerts
+
+INFRASTRUCTURE:
+├── E2B → Test Terraform, Docker builds
+│   └─► Validate before applying
+├── Context7 → AWS, GCP, Azure documentation
+├── Sequential Thinking → Complex infrastructure planning
+│   └─► Multi-region, high availability
+```
+
+**Deployment Safety Pattern:**
+```
+1. E2B → Test migration script in sandbox
+2. Strawberry → Verify production config is secure
+3. GitHub MCP → Create PR with changes
+4. Wait for CI to pass
+5. Deploy to staging
+6. Playwright → Run smoke tests
+7. Deploy to production
+8. Memory MCP → Store deployment notes
+```
+
+**Store Infrastructure Decisions:**
+```
+Memory MCP entities:
+├── "Chose Vercel for deployment"
+├── "Using GitHub Actions for CI"
+├── "Database: PostgreSQL on Railway"
+├── "Redis for session caching"
+└── "Monitoring: Datadog"
+```
+
+## Related Skills
+
+- @security-review - For security in deployments
+- @implementation - For infrastructure code
+- @planning - For deployment planning
+
+---
+
+*Automate everything. Test in staging. Monitor in production.*
