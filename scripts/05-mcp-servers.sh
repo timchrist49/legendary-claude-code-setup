@@ -238,6 +238,21 @@ claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequen
 log_success "Sequential Thinking MCP added"
 
 # ============================================================================
+# Memory MCP (Persistent Memory Across Sessions)
+# ============================================================================
+log_step "Setting up Memory MCP"
+log_info "Memory MCP provides persistent memory across sessions via local knowledge graph"
+
+# Create memory directory
+MEMORY_DIR="$HOME/.claude-memory"
+mkdir -p "$MEMORY_DIR"
+
+log_substep "Adding Memory MCP server..."
+claude mcp remove memory 2>/dev/null || true
+claude mcp add memory -- npx -y @modelcontextprotocol/server-memory --memory-path "$MEMORY_DIR"
+log_success "Memory MCP added (storage: $MEMORY_DIR)"
+
+# ============================================================================
 # Xvfb Setup Script (for Playwright headless)
 # ============================================================================
 log_step "Creating Xvfb startup helper"
@@ -290,4 +305,5 @@ echo "  - strawberry: Hallucination detection"
 echo "  - github: Repository operations, PRs, issues"
 echo "  - e2b: Sandboxed code execution"
 echo "  - sequential-thinking: Problem decomposition"
+echo "  - memory: Persistent memory across sessions"
 print_separator

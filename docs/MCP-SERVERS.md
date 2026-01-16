@@ -4,7 +4,7 @@
 
 ## Overview
 
-This setup includes **8 MCP servers**:
+This setup includes **9 MCP servers**:
 
 | Server | Purpose | API Key Required? |
 |--------|---------|-------------------|
@@ -16,6 +16,7 @@ This setup includes **8 MCP servers**:
 | GitHub | Repository operations | Yes |
 | E2B | Sandboxed execution | Yes |
 | Sequential Thinking | Problem decomposition | No |
+| Memory | Persistent cross-session memory | No |
 
 ## Managing MCP Servers
 
@@ -405,6 +406,64 @@ Xvfb :99 -screen 0 1920x1080x24 &
 
 ---
 
+## Memory MCP
+
+**Purpose:** Persistent memory across Claude Code sessions via a local knowledge graph.
+
+**Why it matters:** Enables Claude to remember user preferences, project decisions, and context across sessions without external services.
+
+### Setup
+
+No API key required:
+
+```bash
+mkdir -p ~/.claude-memory
+claude mcp add memory -- npx -y @modelcontextprotocol/server-memory --memory-path ~/.claude-memory
+```
+
+### Usage
+
+```
+"Remember that I prefer TypeScript over JavaScript"
+"Recall my project preferences"
+"Store that we chose PostgreSQL for ACID compliance"
+"What decisions have we made about the architecture?"
+```
+
+### Available Tools
+
+- `create_entities` - Store new information
+- `create_relations` - Link entities together
+- `search_nodes` - Search stored information
+- `open_nodes` - Retrieve specific entities
+- `delete_entities` - Remove outdated info
+
+### What to Store
+
+| Category | Examples |
+|----------|----------|
+| Preferences | Code style, frameworks, testing approach |
+| Decisions | Architecture choices with rationale |
+| Patterns | Project-specific conventions |
+| Context | Current task state, next steps |
+
+### Data Location
+
+Memory is stored locally in `~/.claude-memory/` as a knowledge graph. No external API calls are made.
+
+### Best Practices
+
+1. **Be selective** - Store meaningful info, not every interaction
+2. **Include rationale** - Store WHY, not just WHAT
+3. **Keep updated** - Delete outdated preferences
+4. **Organize well** - Use relations to connect related entities
+
+### Documentation
+
+- [npm: @modelcontextprotocol/server-memory](https://www.npmjs.com/package/@modelcontextprotocol/server-memory)
+
+---
+
 ## MCP Tool Selection Matrix
 
 | Need | Primary Tool | Fallback |
@@ -417,6 +476,7 @@ Xvfb :99 -screen 0 1920x1080x24 &
 | PR/Issue management | GitHub | Bash (gh CLI) |
 | Run untrusted code | E2B | Docker sandbox |
 | Complex planning | Sequential Thinking | Planning skill |
+| Cross-session memory | Memory | STATE.md files |
 
 ---
 
@@ -454,6 +514,7 @@ MCP servers are stored in `~/.claude/` config files. You can also edit `~/.claud
 6. **Use Browserbase for research** - Web scraping, screenshots
 7. **Use Playwright for testing** - UI automation and verification
 8. **Use Strawberry for verification** - High-stakes decisions and security
+9. **Use Memory for persistence** - Preferences, decisions, project knowledge
 
 ---
 

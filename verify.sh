@@ -187,8 +187,21 @@ if command_exists claude; then
     else
         check_warn "Sequential Thinking MCP not configured"
     fi
+
+    if echo "$mcp_list" | grep -q "memory"; then
+        check_pass "Memory MCP configured"
+    else
+        check_warn "Memory MCP not configured"
+    fi
 else
     check_warn "Cannot check MCP servers (Claude CLI not available)"
+fi
+
+# Check memory directory
+if [[ -d "$HOME/.claude-memory" ]]; then
+    check_pass "Memory storage directory exists"
+else
+    check_warn "Memory storage directory not found (~/.claude-memory)"
 fi
 
 # ============================================================================

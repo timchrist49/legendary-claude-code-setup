@@ -6,7 +6,7 @@
 
 ## What's Included
 
-### 8 MCP Servers
+### 9 MCP Servers
 | Server | Purpose |
 |--------|---------|
 | [Context7](https://context7.com) | Up-to-date documentation lookup |
@@ -17,6 +17,7 @@
 | [GitHub](https://github.com/modelcontextprotocol/servers) | PR/issue management, CI status |
 | [E2B](https://e2b.dev) | Sandboxed code execution |
 | [Sequential Thinking](https://github.com/modelcontextprotocol/servers) | Problem decomposition |
+| [Memory](https://github.com/modelcontextprotocol/servers) | Persistent memory across sessions |
 
 ### 7 Skills (Auto-Activated via Hooks)
 | Skill | Purpose |
@@ -129,9 +130,9 @@ legendary-claude-code-setup/
 │
 ├── config/claude/
 │   ├── CLAUDE.md             # Main context file
-│   ├── RULES.md              # 10 behavioral rules + security baselines
+│   ├── RULES.md              # 11 behavioral rules + security baselines
 │   ├── PRINCIPLES.md         # Dev principles + Definition of Done
-│   ├── MCP/                  # 8 MCP guideline files
+│   ├── MCP/                  # 9 MCP guideline files
 │   ├── skills/               # 7 skill definitions
 │   ├── hooks/                # 3 automation hooks
 │   ├── context/              # Project templates
@@ -157,7 +158,7 @@ After running `bootstrap.sh`, you'll have:
 ├── CLAUDE.md                 # Auto-loaded every session
 ├── RULES.md                  # Behavioral rules
 ├── PRINCIPLES.md             # Development principles
-├── MCP/                      # MCP guidelines (8 files)
+├── MCP/                      # MCP guidelines (9 files)
 ├── skills/                   # Skills (7 directories)
 ├── hooks/                    # Automation hooks (3 scripts)
 ├── context/                  # Project templates
@@ -246,6 +247,45 @@ For headless servers:
 ```
 "Run Strawberry check on this implementation plan"
 ```
+
+### Memory - Persistent Storage
+```
+"Remember that I prefer TypeScript"
+"Recall my project preferences"
+```
+
+Memory stores data in `~/.claude-memory/`.
+
+---
+
+## Automation vs Manual Features
+
+### Fully Automated (No Action Required)
+| Feature | How It Works |
+|---------|--------------|
+| Skill Evaluation | Hook runs on every prompt, evaluates which skill applies |
+| Session Context | Hook loads PROJECT.md, STATE.md at session start |
+| Quality Suggestions | Hook suggests checks after file edits |
+| MCP Availability | All 9 MCP servers are installed and available |
+
+### Semi-Automated (Context-Triggered)
+| Feature | When It Runs |
+|---------|--------------|
+| Sequential Thinking | Claude uses it for complex planning (>3 components) |
+| Strawberry | Claude uses it for security-related code |
+| Memory | Claude stores preferences you mention |
+| Tavily/Context7 | Claude uses for unfamiliar libraries |
+| E2B | Claude uses for untrusted code execution |
+
+Rule 11 in RULES.md defines when each MCP should auto-invoke.
+
+### Manual Installation Required
+| Feature | How to Install |
+|---------|----------------|
+| Superpowers plugin | `/plugin marketplace add obra/superpowers-marketplace` |
+| Episodic Memory plugin | `/plugin install episodic-memory@superpowers-marketplace` |
+| Ralph (external tool) | Bash wrapper script, runs outside Claude Code |
+| GSD (external tool) | Installed via npx, provides `/gsd:*` commands |
 
 ---
 

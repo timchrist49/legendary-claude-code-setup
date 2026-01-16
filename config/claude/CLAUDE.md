@@ -18,6 +18,7 @@ Read and follow these files in order of priority:
    - `@MCP/MCP_GitHub.md` - Repository operations
    - `@MCP/MCP_E2B.md` - Sandboxed code execution
    - `@MCP/MCP_SequentialThinking.md` - Problem decomposition
+   - `@MCP/MCP_Memory.md` - Persistent memory across sessions
 
 ## Prime Directive
 
@@ -52,6 +53,8 @@ Ship production-ready code for MVPs quickly with:
 | Complex planning | Sequential Thinking | Planning skill |
 | Security review | security-review skill | Strawberry |
 | CI/CD setup | devsecops skill | GitHub Actions docs |
+| Persist preferences | Memory | STATE.md files |
+| Recall past decisions | Memory | Git history |
 
 ## Quick Reference
 
@@ -100,13 +103,37 @@ Ship production-ready code for MVPs quickly with:
 "Analyze the trade-offs between approaches"
 ```
 
+### Persistent Memory
+```
+"Remember that I prefer TypeScript"
+"Recall my preferences for this project"
+"Store this decision and rationale"
+```
+
+## MCP Auto-Usage Rules
+
+These tools should be used AUTOMATICALLY in specific scenarios:
+
+| Scenario | Auto-Use Tool |
+|----------|---------------|
+| Complex problem (>3 components) | Sequential Thinking |
+| Security-related changes | Strawberry verification |
+| Auth/payment/data migration | Strawberry verification |
+| Unfamiliar library/framework | Tavily + Context7 research |
+| User states a preference | Memory (store it) |
+| Architecture decisions made | Memory (store rationale) |
+| Session start on known project | Memory (recall context) |
+| High-stakes implementation | Strawberry + E2B sandbox |
+
 ## Session State
 
 When working on a project:
 1. Check for `PROJECT.md` - project context
 2. Check for `STATE.md` - current session state
 3. Check for `ROADMAP.md` - planned work
-4. Update `STATE.md` with decisions and progress
+4. **Query Memory** for user preferences and past decisions
+5. Update `STATE.md` with decisions and progress
+6. **Store to Memory** any new preferences or important decisions
 
 ## Output Requirements
 

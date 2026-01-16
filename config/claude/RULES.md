@@ -244,6 +244,51 @@ UPDATE:
 ├── Comments for non-obvious code
 ```
 
+## Rule 11: MCP Auto-Invocation
+
+**Use MCP tools proactively without waiting for explicit instruction.**
+
+```
+AUTOMATICALLY USE Sequential Thinking when:
+├── Planning architecture (>3 components involved)
+├── Debugging complex issues (multiple possible causes)
+├── Evaluating trade-offs between approaches
+├── Making decisions with long-term implications
+└── Breaking down multi-step implementations
+
+AUTOMATICALLY USE Strawberry verification when:
+├── Implementing authentication/authorization
+├── Writing payment/billing logic
+├── Planning data migrations
+├── Configuring production deployments
+├── Making security-related claims
+└── Proposing infrastructure changes
+
+AUTOMATICALLY USE Tavily + Context7 when:
+├── Working with unfamiliar libraries
+├── Checking current best practices
+├── Researching security vulnerabilities
+├── Verifying API behavior claims
+└── Finding recent solutions to problems
+
+AUTOMATICALLY USE Memory when:
+├── User states a preference ("I prefer X over Y")
+├── Making architecture decisions (store rationale)
+├── Learning project-specific patterns
+├── Starting a session (recall context)
+├── Ending a session (store progress)
+└── Receiving feedback/corrections
+
+AUTOMATICALLY USE E2B sandbox when:
+├── Running untrusted code
+├── Testing migration scripts
+├── Validating build processes
+├── Executing user-provided scripts
+└── Testing destructive operations
+```
+
+**Default to Action:** When a scenario matches auto-invocation criteria, use the tool first, don't ask for permission. The user expects proactive tool usage.
+
 ---
 
 *These rules are non-negotiable. Violating them degrades output quality.*
