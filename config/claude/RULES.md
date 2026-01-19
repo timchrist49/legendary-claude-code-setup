@@ -58,10 +58,10 @@ AFTER EACH BATCH:
 
 ## Rule 4: Anti-Hallucination Protocol
 
-**High-risk claims require verification.**
+**High-risk claims require verification with `detect_hallucination` tool.**
 
 ```
-HIGH-RISK CATEGORIES (always verify):
+HIGH-RISK CATEGORIES (always verify with detect_hallucination):
 ├── Authentication/Authorization flows
 ├── Payment/Billing logic
 ├── Security configurations
@@ -73,8 +73,19 @@ HIGH-RISK CATEGORIES (always verify):
 VERIFICATION METHODS:
 ├── Context7 → Official documentation
 ├── Tavily → Current state of the world
-├── Strawberry → Reasoning validation
+├── detect_hallucination → Verify reasoning before implementation
+├── audit_trace_budget → Validate claim citations against sources
 └── Playwright → Actual behavior testing
+
+HALLUCINATION DETECTION WORKFLOW:
+1. After generating an answer/plan for high-risk work
+2. Call: detect_hallucination tool with the answer and source spans
+3. Check budget_gap values:
+   - < 0 bits: Claim well-supported ✓
+   - 0-2 bits: Minor extrapolation (acceptable)
+   - 2-10 bits: Suspicious - verify manually
+   - > 10 bits: Likely hallucination - DO NOT proceed
+4. If flagged, gather more evidence before implementing
 ```
 
 ## Rule 5: Context Hygiene
@@ -256,13 +267,21 @@ AUTOMATICALLY USE Sequential Thinking when:
 ├── Making decisions with long-term implications
 └── Breaking down multi-step implementations
 
-AUTOMATICALLY USE Strawberry verification when:
+AUTOMATICALLY USE detect_hallucination tool when:
 ├── Implementing authentication/authorization
 ├── Writing payment/billing logic
 ├── Planning data migrations
 ├── Configuring production deployments
 ├── Making security-related claims
-└── Proposing infrastructure changes
+├── Proposing infrastructure changes
+└── ANY time you generate a root cause analysis or implementation plan
+
+EXAMPLE USAGE:
+"Use detect_hallucination to verify this answer:
+Answer: '[your generated answer with citations]'
+Spans:
+- S0: '[source code or doc excerpt]'
+- S1: '[another source]'"
 
 AUTOMATICALLY USE Tavily + Context7 when:
 ├── Working with unfamiliar libraries

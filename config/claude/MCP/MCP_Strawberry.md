@@ -1,17 +1,40 @@
-# Strawberry MCP Guidelines
+# Hallucination Detector MCP (Strawberry/Pythea)
 
-> Strawberry (Pythea) provides procedural hallucination detection to verify reasoning.
+> Detects procedural hallucinations using information theory before they ship.
+> MCP Server Name: `hallucination-detector`
+> Source: https://github.com/leochlon/pythea
+
+## Installation
+
+The bootstrap script automatically installs this MCP. Manual installation:
+
+```bash
+# Clone repository
+git clone https://github.com/leochlon/pythea.git ~/.claude-tools/pythea
+cd ~/.claude-tools/pythea
+
+# Create venv and install
+python3.12 -m venv .venv
+.venv/bin/pip install -e ".[mcp]"
+.venv/bin/pip install 'mcp[cli]'
+
+# Register MCP (requires OPENAI_API_KEY)
+claude mcp add hallucination-detector \
+  --env OPENAI_API_KEY=$OPENAI_API_KEY \
+  -- ~/.claude-tools/pythea/.venv/bin/python -m strawberry.mcp_server
+```
 
 ## When to Use
 
-**ALWAYS use Strawberry for:**
+**ALWAYS use `detect_hallucination` for:**
 - High-stakes technical claims
 - Security-related decisions
 - Production deployment plans
 - Financial/billing logic
 - Authentication flows
 - Data migration plans
-- Performance claims
+- Root cause analysis
+- Implementation plans for critical systems
 
 **Consider using for:**
 - Complex implementation plans
@@ -19,46 +42,76 @@
 - Claims about external systems
 - Unfamiliar technology assessments
 
-## Key Capabilities
+## Key Tools
 
 ### detect_hallucination
-Analyzes claims for potential hallucination.
+Automatically splits an answer into claims and checks each against cited sources.
+
+**Usage:**
 ```
-Use cases:
-├── Verify implementation plan accuracy
-├── Check security claim validity
-├── Validate API behavior claims
-└── Assess reasoning chain soundness
+Use detect_hallucination to verify this answer:
+
+Answer: "The function returns 42 [S0] and handles errors gracefully [S1]."
+
+Spans:
+- S0: "def calculate(): return 42"
+- S1: "try: ... except: raise"
 ```
 
 ### audit_trace_budget
-Audits reasoning trace for completeness.
+More reliable - you provide pre-parsed claims with explicit citations.
+
+**Usage:**
 ```
-Use cases:
-├── Ensure all edge cases considered
-├── Verify decision chain completeness
-├── Check for missing steps
-└── Validate assumption coverage
+Use audit_trace_budget to verify these claims:
+
+Steps:
+1. "The function returns 42" citing S0
+2. "Errors are re-raised, not handled" citing S1
+
+Spans:
+- S0: "def calculate(): return 42"
+- S1: "try: ... except: raise"
 ```
+
+## Understanding Results
+
+```json
+{
+  "flagged": true,
+  "summary": {"claims_scored": 2, "flagged_claims": 1, "flagged_idxs": [1]},
+  "details": [
+    {"idx": 0, "claim": "...", "flagged": false, "budget_gap": {"min": -2.1, "max": -1.5}},
+    {"idx": 1, "claim": "...", "flagged": true, "budget_gap": {"min": 8.3, "max": 12.1}}
+  ]
+}
+```
+
+| `budget_gap` (bits) | Meaning | Action |
+|---------------------|---------|--------|
+| < 0 | Claim well-supported | Proceed ✓ |
+| 0-2 | Minor extrapolation | Usually acceptable |
+| 2-10 | Suspicious | Verify manually |
+| > 10 | **Likely hallucination** | DO NOT proceed ✗ |
 
 ## Usage Patterns
 
 ### Before Implementation
 ```
-"Run Strawberry hallucination check on this implementation plan"
-"Verify my reasoning for [architectural decision] with Strawberry"
+"Use detect_hallucination to verify this implementation plan"
+"Run hallucination check on my architectural decision"
 ```
 
 ### After Research
 ```
-"Use Strawberry to validate these claims from my research"
+"Use detect_hallucination to validate these claims from my research"
 "Check if my synthesis of [topic] is accurate"
 ```
 
 ### For Security
 ```
-"Run Strawberry verification on this authentication flow"
-"Verify the security implications of [change] with Strawberry"
+"Use detect_hallucination on this authentication flow"
+"Verify the security implications of [change]"
 ```
 
 ## High-Risk Scenarios

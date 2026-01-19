@@ -79,28 +79,31 @@ Ship production-ready code for MVPs quickly with:
 3. RESEARCH  → Use Tavily/Context7 to verify approaches
 4. PLAN      → Use Sequential Thinking for complex analysis
               → MUST use /superpowers:write-plan for implementation
-5. IMPLEMENT → MUST use /superpowers:execute-plan in batches
+5. VERIFY    → For high-risk work: Use detect_hallucination on your plan
+              → Check budget_gap < 2 bits before proceeding
+6. IMPLEMENT → MUST use /superpowers:execute-plan in batches
               → Orchestrate sub-agents for parallel work
               → Update STATE.md with progress
-6. VERIFY    → Test each change, run Strawberry on security claims
-7. STORE     → Save decisions to Memory MCP
+7. TEST      → Test each change
+              → Use detect_hallucination on root cause analysis
+8. STORE     → Save decisions to Memory MCP
               → Commit changes (Episodic Memory auto-indexes)
 ```
 
 ## Tool Ecosystem
 
 ### MCP Servers (9 total)
-| Server | Purpose | Auto-Trigger |
-|--------|---------|--------------|
-| Context7 | Library documentation | Unfamiliar APIs |
-| Tavily | Web search | Current info needed |
-| Browserbase | Cloud browser | Web scraping |
-| Playwright | Browser testing | UI verification |
-| Strawberry | Hallucination check | Security/high-stakes |
-| GitHub | Repo operations | PR/issue work |
-| E2B | Sandboxed execution | Untrusted code |
-| Sequential Thinking | Problem decomposition | Complex planning |
-| Memory | Store preferences/decisions | User states preference |
+| Server | Purpose | Auto-Trigger | Tool |
+|--------|---------|--------------|------|
+| Context7 | Library documentation | Unfamiliar APIs | resolve-library-id, get-library-docs |
+| Tavily | Web search | Current info needed | tavily-search |
+| Browserbase | Cloud browser | Web scraping | browserbase_* |
+| Playwright | Browser testing | UI verification | browser_* |
+| hallucination-detector | Verify reasoning | Security/high-stakes | **detect_hallucination**, audit_trace_budget |
+| GitHub | Repo operations | PR/issue work | github_* |
+| E2B | Sandboxed execution | Untrusted code | e2b_* |
+| Sequential Thinking | Problem decomposition | Complex planning | sequentialthinking |
+| Memory | Store preferences/decisions | User states preference | create_entities, create_relations |
 
 ### Plugins (2 total)
 | Plugin | Commands | Auto-Trigger |
@@ -179,14 +182,16 @@ These tools should be used AUTOMATICALLY in specific scenarios:
 | Scenario | Auto-Use Tool |
 |----------|---------------|
 | Complex problem (>3 components) | Sequential Thinking |
-| Security-related changes | Strawberry verification |
-| Auth/payment/data migration | Strawberry verification |
+| Security-related changes | `detect_hallucination` |
+| Auth/payment/data migration | `detect_hallucination` |
+| Root cause analysis generated | `detect_hallucination` |
+| Implementation plan for high-stakes | `detect_hallucination` + `audit_trace_budget` |
 | Unfamiliar library/framework | Tavily + Context7 research |
 | User states a preference | Memory MCP (store it) |
 | Architecture decisions made | Memory MCP (store rationale) |
 | Session start on known project | Episodic Memory + Memory MCP |
 | Need past context | Episodic Memory search |
-| High-stakes implementation | Strawberry + E2B sandbox |
+| High-stakes implementation | `detect_hallucination` + E2B sandbox |
 | Planning complex feature | Sequential Thinking + /superpowers:write-plan |
 
 ## Quick Reference
@@ -210,6 +215,22 @@ These tools should be used AUTOMATICALLY in specific scenarios:
 "Remember that I prefer [X]"
 "Store this decision: [rationale]"
 "Recall my preferences for this project"
+```
+
+### Hallucination Detector (Strawberry/Pythea)
+```
+# Verify an answer/plan before implementing
+"Use detect_hallucination to verify this answer:
+Answer: 'The function returns 42 [S0] and handles errors gracefully [S1].'
+Spans:
+- S0: 'def calculate(): return 42'
+- S1: 'try: ... except: raise'"
+
+# Results interpretation:
+budget_gap < 0 bits  → Well-supported (proceed) ✓
+budget_gap 0-2 bits  → Minor extrapolation (usually OK)
+budget_gap 2-10 bits → Suspicious (verify manually)
+budget_gap > 10 bits → Likely hallucination (DO NOT proceed) ✗
 ```
 
 ### GSD Commands
