@@ -164,10 +164,10 @@ if command_exists claude; then
         check_warn "Tavily MCP not configured"
     fi
 
-    if echo "$mcp_list" | grep -q "strawberry"; then
-        check_pass "Strawberry MCP configured"
+    if echo "$mcp_list" | grep -q "hallucination-detector"; then
+        check_pass "Hallucination Detector MCP configured (Pythea/Strawberry)"
     else
-        check_warn "Strawberry MCP not configured"
+        check_warn "Hallucination Detector MCP not configured (requires OPENAI_API_KEY)"
     fi
 
     if echo "$mcp_list" | grep -q "github"; then

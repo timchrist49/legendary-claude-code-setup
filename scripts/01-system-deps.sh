@@ -69,6 +69,10 @@ apt install -y \
     fd-find \
     htop
 
+log_step "Installing Python 3.12 venv support"
+# Required for Pythea/Strawberry hallucination detection MCP
+apt install -y python3.12-venv 2>/dev/null || apt install -y python3-venv
+
 # Create symlink for fd (Debian names it fdfind)
 if command_exists fdfind && ! command_exists fd; then
     ln -sf "$(which fdfind)" /usr/local/bin/fd

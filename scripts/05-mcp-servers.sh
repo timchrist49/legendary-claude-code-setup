@@ -149,39 +149,93 @@ else
 fi
 
 # ============================================================================
-# Strawberry MCP (Hallucination Detection) - OPTIONAL
+# Strawberry/Pythea MCP (Hallucination Detection)
+# Source: https://github.com/leochlon/pythea
+# Requires: Python 3.12+, OPENAI_API_KEY
 # ============================================================================
-log_step "Setting up Strawberry MCP (Optional)"
-log_info "Strawberry provides procedural hallucination detection"
-log_info "Note: This is an optional component - the package may not be publicly available"
+log_step "Setting up Strawberry MCP (Hallucination Detection)"
+log_info "Strawberry detects procedural hallucinations using information theory"
+log_info "Source: https://github.com/leochlon/pythea"
 
-# Check if STRAWBERRY_ENABLED is set (default: skip)
-STRAWBERRY_ENABLED="${STRAWBERRY_ENABLED:-false}"
+# Check for OpenAI API key (required for Strawberry)
+OPENAI_API_KEY="${OPENAI_API_KEY:-}"
+if [[ -z "$OPENAI_API_KEY" ]]; then
+    log_warn "OPENAI_API_KEY not set"
+    echo -e "  Strawberry requires OpenAI API for verification"
+    echo -e "  Get your API key at: ${CYAN}https://platform.openai.com/api-keys${NC}"
+    echo ""
 
-if [[ "$STRAWBERRY_ENABLED" == "true" ]]; then
-    log_substep "Attempting to install strawberry hallucination detection..."
+    if confirm "Enter OpenAI API key now?" "n"; then
+        read -r -p "OpenAI API Key: " OPENAI_API_KEY
+    fi
+fi
 
-    # Try to install if a package is specified
-    STRAWBERRY_PACKAGE="${STRAWBERRY_PACKAGE:-}"
-    if [[ -n "$STRAWBERRY_PACKAGE" ]]; then
-        python3 -m pip install "$STRAWBERRY_PACKAGE" --break-system-packages 2>/dev/null || \
-            python3 -m pip install "$STRAWBERRY_PACKAGE" 2>/dev/null || true
+if [[ -n "$OPENAI_API_KEY" ]]; then
+    # Check for Python 3.12+
+    if command_exists python3.12; then
+        PYTHON_CMD="python3.12"
+    elif python3 --version 2>/dev/null | grep -qE "3\.1[2-9]"; then
+        PYTHON_CMD="python3"
+    else
+        log_warn "Strawberry requires Python 3.12+, skipping"
+        PYTHON_CMD=""
     fi
 
-    # Check if the module exists
-    STRAWBERRY_MODULE="${STRAWBERRY_MODULE:-strawberry.mcp_server}"
-    if python3 -c "import ${STRAWBERRY_MODULE%.*}" 2>/dev/null; then
-        log_substep "Adding Strawberry MCP server..."
-        claude mcp remove strawberry 2>/dev/null || true
-        claude mcp add strawberry -- python3 -m "$STRAWBERRY_MODULE"
-        log_success "Strawberry MCP added"
-    else
-        log_warn "Strawberry module not found"
-        log_info "Set STRAWBERRY_PACKAGE and STRAWBERRY_MODULE env vars to configure"
+    if [[ -n "$PYTHON_CMD" ]]; then
+        PYTHEA_DIR="$HOME/.claude-tools/pythea"
+        PYTHEA_VENV="$PYTHEA_DIR/.venv"
+
+        log_substep "Cloning Pythea repository..."
+        if [[ -d "$PYTHEA_DIR" ]]; then
+            cd "$PYTHEA_DIR"
+            git pull origin main 2>/dev/null || true
+        else
+            mkdir -p "$(dirname "$PYTHEA_DIR")"
+            git clone https://github.com/leochlon/pythea.git "$PYTHEA_DIR" 2>/dev/null || {
+                log_warn "Failed to clone Pythea repository"
+                PYTHEA_DIR=""
+            }
+        fi
+
+        if [[ -n "$PYTHEA_DIR" && -d "$PYTHEA_DIR" ]]; then
+            cd "$PYTHEA_DIR"
+
+            log_substep "Creating Python 3.12 virtual environment..."
+            $PYTHON_CMD -m venv "$PYTHEA_VENV" 2>/dev/null || {
+                log_warn "Failed to create venv"
+                PYTHEA_VENV=""
+            }
+
+            if [[ -n "$PYTHEA_VENV" && -d "$PYTHEA_VENV" ]]; then
+                log_substep "Installing Pythea with MCP support..."
+                "$PYTHEA_VENV/bin/pip" install --upgrade pip 2>/dev/null
+                "$PYTHEA_VENV/bin/pip" install -e ".[mcp]" 2>/dev/null || {
+                    log_warn "Failed to install Pythea"
+                }
+                # Install MCP SDK (required for the MCP server)
+                "$PYTHEA_VENV/bin/pip" install 'mcp[cli]' 2>/dev/null || true
+
+                # Verify installation
+                if "$PYTHEA_VENV/bin/python" -c "import strawberry; print('ok')" 2>/dev/null; then
+                    log_substep "Adding Strawberry MCP server (hallucination-detector)..."
+                    claude mcp remove hallucination-detector 2>/dev/null || true
+                    claude mcp remove strawberry 2>/dev/null || true
+                    claude mcp add hallucination-detector \
+                        --env OPENAI_API_KEY="$OPENAI_API_KEY" \
+                        -- "$PYTHEA_VENV/bin/python" -m strawberry.mcp_server
+                    log_success "Strawberry MCP added as 'hallucination-detector'"
+                    log_info "Usage: Ask Claude to 'Use detect_hallucination on [your answer]'"
+                else
+                    log_warn "Pythea installation verification failed"
+                fi
+            fi
+        fi
+
+        cd "$PROJECT_ROOT" 2>/dev/null || true
     fi
 else
-    log_info "Skipping Strawberry MCP (set STRAWBERRY_ENABLED=true to enable)"
-    log_info "Strawberry requires manual setup - see: https://github.com/search?q=strawberry+mcp+hallucination"
+    log_warn "Skipping Strawberry MCP (no OpenAI API key)"
+    log_info "Add OPENAI_API_KEY to .env and re-run to enable hallucination detection"
 fi
 
 # ============================================================================
@@ -337,7 +391,7 @@ check_mcp_status "github"
 check_mcp_status "e2b"
 check_mcp_status "sequential-thinking"
 check_mcp_status "memory"
-check_mcp_status "strawberry"
+check_mcp_status "hallucination-detector"
 
 echo ""
 echo -e "  ${GREEN}Connected:${NC} $CONNECTED"
@@ -362,14 +416,19 @@ echo "  - For Playwright on headless servers, run: ~/.local/bin/start-xvfb.sh"
 echo "  - Verify with: claude mcp list"
 echo "  - Test MCPs by asking Claude to use them"
 echo ""
-echo -e "${CYAN}MCP Servers (npm packages):${NC}"
-echo "  - context7: @upstash/context7-mcp (Documentation lookup)"
-echo "  - tavily-mcp: tavily-mcp@latest (Web search)"
-echo "  - browserbase: @browserbasehq/mcp-server-browserbase (Cloud browser)"
-echo "  - playwright: @playwright/mcp@latest (Local browser - Microsoft official)"
-echo "  - github: @modelcontextprotocol/server-github (Repository operations)"
-echo "  - e2b: @e2b/mcp-server (Sandboxed code execution)"
-echo "  - sequential-thinking: @modelcontextprotocol/server-sequential-thinking"
-echo "  - memory: @modelcontextprotocol/server-memory (Persistent memory)"
-echo "  - strawberry: (Optional - hallucination detection)"
+echo -e "${CYAN}MCP Servers:${NC}"
+echo "  npm packages:"
+echo "    - context7: @upstash/context7-mcp (Documentation lookup)"
+echo "    - tavily-mcp: tavily-mcp@latest (Web search)"
+echo "    - browserbase: @browserbasehq/mcp-server-browserbase (Cloud browser)"
+echo "    - playwright: @playwright/mcp@latest (Local browser - Microsoft official)"
+echo "    - github: @modelcontextprotocol/server-github (Repository operations)"
+echo "    - e2b: @e2b/mcp-server (Sandboxed code execution)"
+echo "    - sequential-thinking: @modelcontextprotocol/server-sequential-thinking"
+echo "    - memory: @modelcontextprotocol/server-memory (Persistent memory)"
+echo ""
+echo "  Python packages:"
+echo "    - hallucination-detector: Pythea/Strawberry (Requires OPENAI_API_KEY)"
+echo "      Source: https://github.com/leochlon/pythea"
+echo "      Usage: 'Use detect_hallucination on [your answer]'"
 print_separator
