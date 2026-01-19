@@ -1,0 +1,11 @@
+# Claude Code Super Setup - Python Dependencies
+# Install with: pip install -r requirements.txt --break-system-packages
+
+# Core dependencies for MCP servers and tools
+setuptools>=65.0.0
+wheel>=0.40.0
+
+# Note: The Strawberry/Pythea hallucination detection MCP server
+# is currently not publicly available as a pip package.
+# If you have access to it, add it here:
+# pythea>=0.1.0

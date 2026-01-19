@@ -33,6 +33,22 @@ apt install -y \
 
 log_step "Installing Playwright browser dependencies"
 # These are required for headless Chrome/Chromium on Debian/Ubuntu
+
+# Detect Ubuntu version for libasound2 package name
+# Ubuntu 24.04+ renamed libasound2 to libasound2t64
+LIBASOUND_PKG="libasound2"
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release
+    if [[ "$ID" == "ubuntu" ]]; then
+        # Extract major version number
+        UBUNTU_MAJOR="${VERSION_ID%%.*}"
+        if [[ "$UBUNTU_MAJOR" -ge 24 ]]; then
+            LIBASOUND_PKG="libasound2t64"
+            log_info "Ubuntu 24.04+ detected, using $LIBASOUND_PKG"
+        fi
+    fi
+fi
+
 apt install -y \
     libnss3 \
     libatk-bridge2.0-0 \
@@ -43,7 +59,7 @@ apt install -y \
     fonts-liberation \
     libappindicator3-1 \
     libxss1 \
-    libasound2 \
+    "$LIBASOUND_PKG" \
     xvfb \
     xauth
 

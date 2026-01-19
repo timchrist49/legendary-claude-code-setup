@@ -47,11 +47,13 @@ fi
 if [[ -n "$CONTEXT7_API_KEY" ]]; then
     log_substep "Adding Context7 MCP server..."
     claude mcp remove context7 2>/dev/null || true
-    claude mcp add context7 -- npx -y @upstash/context7-mcp --api-key "$CONTEXT7_API_KEY"
+    claude mcp add context7 \
+        --env CONTEXT7_API_KEY="$CONTEXT7_API_KEY" \
+        -- npx -y @upstash/context7-mcp
     log_success "Context7 MCP added"
 else
     log_warn "Skipping Context7 (no API key provided)"
-    log_info "Add later with: claude mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_KEY"
+    log_info "Add later with: claude mcp add context7 --env CONTEXT7_API_KEY=YOUR_KEY -- npx -y @upstash/context7-mcp"
 fi
 
 # ============================================================================
@@ -107,12 +109,13 @@ rm -rf "$HOME/.cache/ms-playwright/mcp-chrome-"* 2>/dev/null || true
 
 log_substep "Adding Playwright MCP server..."
 claude mcp remove playwright 2>/dev/null || true
+# Using Microsoft's official Playwright MCP package
+# Env vars for headless operation on Linux servers
 claude mcp add playwright \
     --env DISPLAY=:99 \
     --env PLAYWRIGHT_HEADLESS=true \
     --env PLAYWRIGHT_CHROMIUM_USE_HEADLESS_NEW=true \
-    --env DEBIAN_FRONTEND=noninteractive \
-    -- npx -y @playwright/mcp@latest --isolated --no-sandbox
+    -- npx -y @playwright/mcp@latest
 
 log_success "Playwright MCP added"
 
@@ -146,25 +149,39 @@ else
 fi
 
 # ============================================================================
-# Pythea/Strawberry MCP (Hallucination Detection)
+# Strawberry MCP (Hallucination Detection) - OPTIONAL
 # ============================================================================
-log_step "Setting up Pythea/Strawberry MCP"
+log_step "Setting up Strawberry MCP (Optional)"
 log_info "Strawberry provides procedural hallucination detection"
+log_info "Note: This is an optional component - the package may not be publicly available"
 
-log_substep "Installing pythea package..."
-python3 -m pip install pythea --break-system-packages 2>/dev/null || \
-    python3 -m pip install pythea
+# Check if STRAWBERRY_ENABLED is set (default: skip)
+STRAWBERRY_ENABLED="${STRAWBERRY_ENABLED:-false}"
 
-# Verify the package is installed
-if python3 -c "import pythea; print('pythea ok')" 2>/dev/null; then
-    log_substep "Adding Strawberry MCP server..."
-    claude mcp remove strawberry 2>/dev/null || true
-    claude mcp add strawberry -- python3 -m strawberry.mcp_server
-    log_success "Strawberry MCP added"
+if [[ "$STRAWBERRY_ENABLED" == "true" ]]; then
+    log_substep "Attempting to install strawberry hallucination detection..."
+
+    # Try to install if a package is specified
+    STRAWBERRY_PACKAGE="${STRAWBERRY_PACKAGE:-}"
+    if [[ -n "$STRAWBERRY_PACKAGE" ]]; then
+        python3 -m pip install "$STRAWBERRY_PACKAGE" --break-system-packages 2>/dev/null || \
+            python3 -m pip install "$STRAWBERRY_PACKAGE" 2>/dev/null || true
+    fi
+
+    # Check if the module exists
+    STRAWBERRY_MODULE="${STRAWBERRY_MODULE:-strawberry.mcp_server}"
+    if python3 -c "import ${STRAWBERRY_MODULE%.*}" 2>/dev/null; then
+        log_substep "Adding Strawberry MCP server..."
+        claude mcp remove strawberry 2>/dev/null || true
+        claude mcp add strawberry -- python3 -m "$STRAWBERRY_MODULE"
+        log_success "Strawberry MCP added"
+    else
+        log_warn "Strawberry module not found"
+        log_info "Set STRAWBERRY_PACKAGE and STRAWBERRY_MODULE env vars to configure"
+    fi
 else
-    log_warn "pythea package installation may have failed"
-    log_info "Try manually: python3 -m pip install pythea"
-    log_info "Then: claude mcp add strawberry -- python3 -m strawberry.mcp_server"
+    log_info "Skipping Strawberry MCP (set STRAWBERRY_ENABLED=true to enable)"
+    log_info "Strawberry requires manual setup - see: https://github.com/search?q=strawberry+mcp+hallucination"
 fi
 
 # ============================================================================
@@ -284,6 +301,55 @@ chmod +x "$XVFB_SCRIPT"
 log_substep "Created: $XVFB_SCRIPT"
 
 # ============================================================================
+# Validation - Check MCP Connection Status
+# ============================================================================
+log_step "Validating MCP Server Connections"
+
+# Get the MCP list output
+MCP_OUTPUT=$(claude mcp list 2>&1 || echo "")
+
+# Count connected vs failed
+CONNECTED=0
+FAILED=0
+FAILED_SERVERS=""
+
+check_mcp_status() {
+    local server_name="$1"
+    if echo "$MCP_OUTPUT" | grep -q "$server_name.*Connected"; then
+        ((CONNECTED++))
+        echo -e "  ${GREEN}✓${NC} $server_name - Connected"
+    elif echo "$MCP_OUTPUT" | grep -q "$server_name.*Failed"; then
+        ((FAILED++))
+        FAILED_SERVERS="$FAILED_SERVERS $server_name"
+        echo -e "  ${RED}✗${NC} $server_name - Failed to connect"
+    elif echo "$MCP_OUTPUT" | grep -q "$server_name"; then
+        echo -e "  ${YELLOW}?${NC} $server_name - Status unknown"
+    fi
+}
+
+echo ""
+echo "MCP Server Status:"
+check_mcp_status "context7"
+check_mcp_status "tavily"
+check_mcp_status "browserbase"
+check_mcp_status "playwright"
+check_mcp_status "github"
+check_mcp_status "e2b"
+check_mcp_status "sequential-thinking"
+check_mcp_status "memory"
+check_mcp_status "strawberry"
+
+echo ""
+echo -e "  ${GREEN}Connected:${NC} $CONNECTED"
+echo -e "  ${RED}Failed:${NC} $FAILED"
+
+if [[ $FAILED -gt 0 ]]; then
+    log_warn "Some MCP servers failed to connect:$FAILED_SERVERS"
+    log_info "This may be due to missing API keys or network issues"
+    log_info "Run 'claude mcp list' for detailed status"
+fi
+
+# ============================================================================
 # Summary
 # ============================================================================
 print_separator
@@ -296,14 +362,14 @@ echo "  - For Playwright on headless servers, run: ~/.local/bin/start-xvfb.sh"
 echo "  - Verify with: claude mcp list"
 echo "  - Test MCPs by asking Claude to use them"
 echo ""
-echo -e "${CYAN}Available MCP Servers:${NC}"
-echo "  - context7: Documentation lookup"
-echo "  - tavily-mcp: Web search and research"
-echo "  - browserbase: Cloud browser automation"
-echo "  - playwright: Local browser automation"
-echo "  - strawberry: Hallucination detection"
-echo "  - github: Repository operations, PRs, issues"
-echo "  - e2b: Sandboxed code execution"
-echo "  - sequential-thinking: Problem decomposition"
-echo "  - memory: Persistent memory across sessions"
+echo -e "${CYAN}MCP Servers (npm packages):${NC}"
+echo "  - context7: @upstash/context7-mcp (Documentation lookup)"
+echo "  - tavily-mcp: tavily-mcp@latest (Web search)"
+echo "  - browserbase: @browserbasehq/mcp-server-browserbase (Cloud browser)"
+echo "  - playwright: @playwright/mcp@latest (Local browser - Microsoft official)"
+echo "  - github: @modelcontextprotocol/server-github (Repository operations)"
+echo "  - e2b: @e2b/mcp-server (Sandboxed code execution)"
+echo "  - sequential-thinking: @modelcontextprotocol/server-sequential-thinking"
+echo "  - memory: @modelcontextprotocol/server-memory (Persistent memory)"
+echo "  - strawberry: (Optional - hallucination detection)"
 print_separator
