@@ -33,20 +33,6 @@ apt install -y \
     python3-venv \
     python3-dev
 
-log_step "Upgrading pip"
-python3 -m pip install --upgrade pip --break-system-packages 2>/dev/null || \
-    python3 -m pip install --upgrade pip
-
-log_step "Installing useful Python packages"
-# Install globally for convenience (use --break-system-packages for newer Debian/Ubuntu)
-python3 -m pip install --upgrade \
-    setuptools \
-    wheel \
-    --break-system-packages 2>/dev/null || \
-python3 -m pip install --upgrade \
-    setuptools \
-    wheel
-
 log_step "Verifying installation"
 installed_python_version=$(python3 --version)
 installed_pip_version=$(python3 -m pip --version)
