@@ -361,7 +361,22 @@ log_substep "Created: $XVFB_SCRIPT"
 # ============================================================================
 log_step "Validating MCP Server Connections"
 log_info "Health-checking 9 MCP servers (this takes 30-60 seconds)..."
+log_info "Please wait - connecting to each server..."
 echo ""
+
+# Start a background spinner to show progress
+spin_pid=""
+if [[ -t 1 ]]; then  # Only if stdout is a terminal
+    (
+        spinner='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+        i=0
+        while true; do
+            printf "\r  [%c] Checking servers..." "${spinner:i++%${#spinner}:1}"
+            sleep 0.1
+        done
+    ) &
+    spin_pid=$!
+fi
 
 # Get the MCP list output with timeout (90 seconds max)
 MCP_OUTPUT=""
@@ -369,6 +384,13 @@ if command -v timeout &> /dev/null; then
     MCP_OUTPUT=$(timeout 90 claude mcp list 2>&1 || echo "TIMEOUT_OR_ERROR")
 else
     MCP_OUTPUT=$(claude mcp list 2>&1 || echo "ERROR")
+fi
+
+# Stop the spinner
+if [[ -n "$spin_pid" ]]; then
+    kill "$spin_pid" 2>/dev/null
+    wait "$spin_pid" 2>/dev/null
+    printf "\r                              \r"  # Clear the spinner line
 fi
 
 # Count connected vs failed
