@@ -388,8 +388,8 @@ fi
 
 # Stop the spinner
 if [[ -n "$spin_pid" ]]; then
-    kill "$spin_pid" 2>/dev/null
-    wait "$spin_pid" 2>/dev/null
+    kill "$spin_pid" 2>/dev/null || true
+    wait "$spin_pid" 2>/dev/null || true  # wait returns 143 for killed process, suppress it
     printf "\r                              \r"  # Clear the spinner line
 fi
 
