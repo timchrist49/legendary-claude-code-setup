@@ -402,10 +402,10 @@ check_mcp_status() {
     local server_name="$1"
     local display_name="${2:-$1}"
     if echo "$MCP_OUTPUT" | grep -q "$server_name.*Connected"; then
-        ((CONNECTED++))
+        ((CONNECTED++)) || true  # || true prevents exit code 1 when CONNECTED was 0
         echo -e "  ${GREEN}✓${NC} $display_name - Connected"
     elif echo "$MCP_OUTPUT" | grep -q "$server_name.*Failed"; then
-        ((FAILED++))
+        ((FAILED++)) || true  # || true prevents exit code 1 when FAILED was 0
         FAILED_SERVERS="$FAILED_SERVERS $display_name"
         echo -e "  ${RED}✗${NC} $display_name - Failed to connect"
     elif echo "$MCP_OUTPUT" | grep -q "$server_name"; then
