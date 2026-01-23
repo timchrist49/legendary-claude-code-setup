@@ -360,9 +360,16 @@ log_substep "Created: $XVFB_SCRIPT"
 # Validation - Check MCP Connection Status
 # ============================================================================
 log_step "Validating MCP Server Connections"
+log_info "Health-checking 9 MCP servers (this takes 30-60 seconds)..."
+echo ""
 
-# Get the MCP list output
-MCP_OUTPUT=$(claude mcp list 2>&1 || echo "")
+# Get the MCP list output with timeout (90 seconds max)
+MCP_OUTPUT=""
+if command -v timeout &> /dev/null; then
+    MCP_OUTPUT=$(timeout 90 claude mcp list 2>&1 || echo "TIMEOUT_OR_ERROR")
+else
+    MCP_OUTPUT=$(claude mcp list 2>&1 || echo "ERROR")
+fi
 
 # Count connected vs failed
 CONNECTED=0
@@ -371,35 +378,40 @@ FAILED_SERVERS=""
 
 check_mcp_status() {
     local server_name="$1"
+    local display_name="${2:-$1}"
     if echo "$MCP_OUTPUT" | grep -q "$server_name.*Connected"; then
         ((CONNECTED++))
-        echo -e "  ${GREEN}✓${NC} $server_name - Connected"
+        echo -e "  ${GREEN}✓${NC} $display_name - Connected"
     elif echo "$MCP_OUTPUT" | grep -q "$server_name.*Failed"; then
         ((FAILED++))
-        FAILED_SERVERS="$FAILED_SERVERS $server_name"
-        echo -e "  ${RED}✗${NC} $server_name - Failed to connect"
+        FAILED_SERVERS="$FAILED_SERVERS $display_name"
+        echo -e "  ${RED}✗${NC} $display_name - Failed to connect"
     elif echo "$MCP_OUTPUT" | grep -q "$server_name"; then
-        echo -e "  ${YELLOW}?${NC} $server_name - Status unknown"
+        echo -e "  ${YELLOW}?${NC} $display_name - Status unknown"
+    else
+        echo -e "  ${YELLOW}-${NC} $display_name - Not found in config"
     fi
 }
 
-echo ""
 echo "MCP Server Status:"
-check_mcp_status "context7"
-check_mcp_status "tavily"
-check_mcp_status "browserbase"
-check_mcp_status "playwright"
-check_mcp_status "github"
-check_mcp_status "e2b"
-check_mcp_status "sequential-thinking"
-check_mcp_status "memory"
-check_mcp_status "hallucination-detector"
+check_mcp_status "context7" "context7"
+check_mcp_status "tavily" "tavily-mcp"
+check_mcp_status "browserbase" "browserbase"
+check_mcp_status "playwright" "playwright"
+check_mcp_status "github" "github"
+check_mcp_status "e2b" "e2b"
+check_mcp_status "sequential-thinking" "sequential-thinking"
+check_mcp_status "memory" "memory"
+check_mcp_status "hallucination-detector" "hallucination-detector"
 
 echo ""
 echo -e "  ${GREEN}Connected:${NC} $CONNECTED"
 echo -e "  ${RED}Failed:${NC} $FAILED"
 
-if [[ $FAILED -gt 0 ]]; then
+if [[ "$MCP_OUTPUT" == "TIMEOUT_OR_ERROR" ]]; then
+    log_warn "Health check timed out or failed"
+    log_info "Servers were added successfully - run 'claude mcp list' to verify later"
+elif [[ $FAILED -gt 0 ]]; then
     log_warn "Some MCP servers failed to connect:$FAILED_SERVERS"
     log_info "This may be due to missing API keys or network issues"
     log_info "Run 'claude mcp list' for detailed status"
@@ -411,7 +423,8 @@ fi
 print_separator
 echo -e "${GREEN}MCP Servers configured:${NC}"
 echo ""
-claude mcp list 2>/dev/null || echo "  (Run 'claude mcp list' to see configured servers)"
+# Show the cached output instead of running claude mcp list again
+echo "$MCP_OUTPUT" | grep -E "^[a-z].*:" | head -15 || echo "  (Run 'claude mcp list' to see configured servers)"
 echo ""
 echo -e "${YELLOW}Notes:${NC}"
 echo "  - For Playwright on headless servers, run: ~/.local/bin/start-xvfb.sh"
