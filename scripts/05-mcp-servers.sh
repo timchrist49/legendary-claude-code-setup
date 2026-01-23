@@ -217,6 +217,8 @@ if [[ -n "$OPENAI_API_KEY" ]]; then
 
                 # Verify installation
                 if "$PYTHEA_VENV/bin/python" -c "import strawberry; print('ok')" 2>/dev/null; then
+                    # IMPORTANT: cd back to home before adding MCP to avoid project scoping
+                    cd "$HOME"
                     log_substep "Adding Strawberry MCP server (hallucination-detector)..."
                     claude mcp remove hallucination-detector 2>/dev/null || true
                     claude mcp remove strawberry 2>/dev/null || true
