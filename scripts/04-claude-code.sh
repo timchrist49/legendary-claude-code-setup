@@ -27,16 +27,12 @@ log_info "This is the recommended installation method from Anthropic"
 # Use process substitution to avoid consuming stdin (which breaks later prompts)
 bash <(curl -fsSL https://claude.ai/install.sh)
 
-log_step "Reloading shell configuration"
-# Source the profile to get claude in PATH
-if [[ -f "$HOME/.bashrc" ]]; then
-    source "$HOME/.bashrc" 2>/dev/null || true
-fi
-if [[ -f "$HOME/.profile" ]]; then
-    source "$HOME/.profile" 2>/dev/null || true
-fi
-
-# Add to PATH for current session if needed
+# Add claude to PATH for current session
+# NOTE: We do NOT source ~/.bashrc or ~/.profile here because:
+# 1. They often contain `return` statements for non-interactive shells
+# 2. A `return` inside a sourced file exits the CALLING script (this one)
+# 3. This would cause bootstrap.sh to stop at Phase 4
+# Instead, we directly set the PATH which is sufficient for verification
 export PATH="$HOME/.claude/bin:$HOME/.local/bin:$PATH"
 
 log_step "Verifying installation"
