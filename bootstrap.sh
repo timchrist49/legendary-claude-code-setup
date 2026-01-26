@@ -480,17 +480,21 @@ SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 SETTINGS_SRC="$CLAUDE_CONFIG_SRC/settings.json"
 
 if [[ -f "$SETTINGS_FILE" ]]; then
+    # Save original settings to temp file for merging (backup_file uses timestamped path)
+    SETTINGS_ORIG=$(mktemp)
+    cp "$SETTINGS_FILE" "$SETTINGS_ORIG"
     # Backup existing settings
     backup_file "$SETTINGS_FILE"
     # Merge hooks into existing settings (requires jq)
     if command -v jq &> /dev/null; then
         # Deep merge the hooks section
-        jq -s '.[0] * .[1]' "$SETTINGS_FILE.bak" "$SETTINGS_SRC" > "$SETTINGS_FILE"
+        jq -s '.[0] * .[1]' "$SETTINGS_ORIG" "$SETTINGS_SRC" > "$SETTINGS_FILE"
         log_substep "settings.json merged with hooks"
     else
         log_warn "jq not found, copying settings.json (existing backed up)"
         cp "$SETTINGS_SRC" "$SETTINGS_FILE"
     fi
+    rm -f "$SETTINGS_ORIG"
 else
     cp "$SETTINGS_SRC" "$SETTINGS_FILE"
     log_substep "settings.json installed"

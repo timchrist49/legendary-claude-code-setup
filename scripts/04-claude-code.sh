@@ -24,7 +24,8 @@ log_step "Installing Claude Code via native binary installer"
 log_info "This is the recommended installation method from Anthropic"
 
 # Download and run the official installer
-curl -fsSL https://claude.ai/install.sh | bash
+# Use process substitution to avoid consuming stdin (which breaks later prompts)
+bash <(curl -fsSL https://claude.ai/install.sh)
 
 log_step "Reloading shell configuration"
 # Source the profile to get claude in PATH
