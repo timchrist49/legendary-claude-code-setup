@@ -22,6 +22,7 @@ Read and follow these files in order of priority:
 4. Plugin Guidelines:
    - `@MCP/PLUGIN_Superpowers.md` - Structured workflows
    - `@MCP/PLUGIN_EpisodicMemory.md` - Search past conversations
+   - `@MCP/PLUGIN_OfficialAnthropicPlugins.md` - Code review, simplifier, frontend design
 
 ## Prime Directive
 
@@ -105,11 +106,22 @@ Ship production-ready code for MVPs quickly with:
 | Sequential Thinking | Problem decomposition | Complex planning | sequentialthinking |
 | Memory | Store preferences/decisions | User states preference | create_entities, create_relations |
 
-### Plugins (2 total)
+### Plugins (7 total)
+
+**Superpowers Marketplace:**
 | Plugin | Commands | Auto-Trigger |
 |--------|----------|--------------|
 | Superpowers | `/superpowers:brainstorm`, `/superpowers:write-plan`, `/superpowers:execute-plan` | Feature planning |
 | Episodic Memory | `/search-conversations` | Need past context |
+
+**Official Anthropic Plugins:**
+| Plugin | Purpose | Auto-Trigger |
+|--------|---------|--------------|
+| claude-code-setup | Recommends automations (hooks, skills, MCP servers) | New project setup |
+| claude-md-management | Manages CLAUDE.md project context | Context updates |
+| code-review | Automated PR review with specialized agents | `/code-review`, PR work |
+| code-simplifier | Simplifies code for clarity (preserves functionality) | After coding sessions |
+| frontend-design | Generates production-grade UI interfaces | Frontend work |
 
 ### Slash Commands (GSD)
 | Command | Purpose |
@@ -233,6 +245,27 @@ budget_gap 2-10 bits → Suspicious (verify manually)
 budget_gap > 10 bits → Likely hallucination (DO NOT proceed) ✗
 ```
 
+### Official Anthropic Plugins
+```
+# Code Review - Run before PRs
+/code-review                # Automated review with multiple agents
+
+# Code Simplifier - Run after coding sessions
+"Run code-simplifier on the changes we made"
+"Simplify this code while preserving functionality"
+
+# Frontend Design - Auto-activated for UI work
+"Create a dashboard for [app type]"
+"Build a landing page for [project]"
+
+# Claude Code Setup - Project recommendations
+"Recommend automations for this project"
+"Help me set up Claude Code"
+
+# CLAUDE.md Management - Context maintenance
+"Update CLAUDE.md with our decisions"
+```
+
 ### GSD Commands
 ```
 /gsd:new-project            # Initialize project context
@@ -284,4 +317,4 @@ These skills provide domain expertise that Superpowers doesn't cover:
 
 *Last updated: {{DATE}}*
 *Framework: Claude Code Super Setup*
-*Components: 9 MCP Servers • 2 Plugins • GSD Commands • 3 Domain Skills • 3 Hooks*
+*Components: 9 MCP Servers • 7 Plugins • GSD Commands • 3 Domain Skills • 3 Hooks*

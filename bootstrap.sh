@@ -268,7 +268,7 @@ if $INTERACTIVE && ! $FULL_AUTO; then
     [[ "$SKIP_CLAUDE_CODE" != "true" ]] && echo "  • Claude Code CLI"
     [[ "$SKIP_MCP" != "true" ]] && echo "  • MCP Servers (Context7, Tavily, Browserbase, Playwright, Strawberry, GitHub, E2B, Sequential Thinking, Memory)"
     [[ "$SKIP_TOOLS" != "true" ]] && echo "  • Additional tools (Ralph, GSD)"
-    [[ "$SKIP_PLUGINS" != "true" ]] && echo "  • Plugins (Superpowers, Episodic Memory)"
+    [[ "$SKIP_PLUGINS" != "true" ]] && echo "  • Plugins (7 total: Superpowers, Episodic Memory, Official Anthropic)"
     echo ""
 
     if ! confirm "Proceed with installation?" "y"; then
@@ -372,7 +372,7 @@ fi
 # Phase 7: Plugins (user space)
 # ============================================================================
 if [[ "$SKIP_PLUGINS" != "true" ]]; then
-    log_step "Phase 7/7: Plugins (Superpowers, Episodic Memory)"
+    log_step "Phase 7/7: Plugins (7 total: Superpowers, Episodic Memory, Official Anthropic)"
 
     if $IS_ROOT; then
         if [[ -n "${SUDO_USER:-}" ]]; then
@@ -515,7 +515,7 @@ echo ""
 [[ "$SKIP_CLAUDE_CODE" != "true" ]] && echo "  ✓ Claude Code CLI"
 [[ "$SKIP_MCP" != "true" ]] && echo "  ✓ MCP Servers (Context7, Tavily, Browserbase, Playwright, Strawberry, GitHub, E2B, Sequential Thinking, Memory)"
 [[ "$SKIP_TOOLS" != "true" ]] && echo "  ✓ Additional tools (Ralph, GSD)"
-[[ "$SKIP_PLUGINS" != "true" ]] && echo "  ✓ Plugins (Superpowers, Episodic Memory)"
+[[ "$SKIP_PLUGINS" != "true" ]] && echo "  ✓ Plugins (7 total: Superpowers, Episodic Memory, Official Anthropic)"
 echo "  ✓ Claude configuration (CLAUDE.md, RULES.md, PRINCIPLES.md)"
 echo "  ✓ MCP guidelines (9 files)"
 echo "  ✓ Skills (planning, implementation, debugging, testing, research, security-review, devsecops)"
@@ -542,7 +542,7 @@ echo "     $ ~/.local/bin/start-xvfb.sh"
 echo ""
 echo -e "${GREEN}${BOLD}Everything is now automated!${NC}"
 echo "  • 9 MCP servers installed"
-echo "  • 2 Plugins installed (Superpowers, Episodic Memory)"
+echo "  • 7 Plugins installed (Superpowers, Episodic Memory + 5 Official Anthropic)"
 echo "  • GSD slash commands (/gsd:*)"
 echo "  • Ralph autonomous loop (external)"
 echo ""
