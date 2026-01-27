@@ -33,13 +33,18 @@
 - **quality-check.sh** - Suggests checks after file edits
 - **session-start.sh** - Shows project context and memory integration suggestions
 
-### 2 Plugins (Automated via CLI!)
+### 7 Plugins (Fully Automated!)
 | Plugin | Purpose |
 |--------|---------|
 | [Superpowers](https://github.com/obra/superpowers) | Structured development workflow, `/superpowers:*` commands |
 | [Episodic Memory](https://github.com/obra/episodic-memory) | Semantic search across past conversations |
+| claude-code-setup | Analyzes codebase, recommends Claude Code automations |
+| claude-md-management | Manages CLAUDE.md project context files |
+| code-review | Automated PR review with specialized agents |
+| code-simplifier | Simplifies code for clarity while preserving functionality |
+| frontend-design | Generates distinctive, production-grade UI interfaces |
 
-**Key Discovery:** Plugins CAN be automated via `claude plugin` CLI command!
+All 7 plugins are installed automatically via `claude plugin install` commands.
 
 ### Additional Tools
 - [Ralph](https://github.com/frankbria/ralph-claude-code) - Autonomous dev loops
@@ -120,13 +125,13 @@ legendary-claude-code-setup/
 │   ├── 04-claude-code.sh     # Claude Code CLI
 │   ├── 05-mcp-servers.sh     # 9 MCP servers
 │   ├── 06-tools.sh           # Ralph, GSD
-│   └── 07-plugins.sh         # Superpowers, Episodic Memory
+│   └── 07-plugins.sh         # 7 plugins (Superpowers, Episodic Memory + 5 Official)
 │
 ├── config/claude/
 │   ├── CLAUDE.md             # Main context file (mandatory Superpowers workflow)
 │   ├── RULES.md              # 14 behavioral rules + security baselines
 │   ├── PRINCIPLES.md         # Dev principles + Definition of Done
-│   ├── MCP/                  # 9 MCP + 2 Plugin guideline files
+│   ├── MCP/                  # 9 MCP + 3 Plugin guideline files
 │   ├── skills/               # 3 domain skills (security, devsecops, research)
 │   ├── hooks/                # 3 automation hooks
 │   ├── context/              # Project templates
@@ -138,6 +143,7 @@ legendary-claude-code-setup/
     ├── HOOKS.md              # Hooks system guide
     ├── SECURITY.md           # Security hardening guide
     ├── PRODUCTION-ADDENDUM.md # Advanced production guide
+    ├── QUICK-REFERENCE.md    # All keywords & triggers cheat sheet
     └── TROUBLESHOOTING.md    # Common issues
 ```
 
@@ -263,7 +269,7 @@ Memory stores data in `~/.claude-memory/`.
 | Feature | How It Works |
 |---------|--------------|
 | 9 MCP Servers | Installed via `claude mcp add` commands |
-| 2 Plugins | Installed via `claude plugin install` commands |
+| 7 Plugins | Installed via `claude plugin install` commands |
 | GSD Slash Commands | Installed via `npx get-shit-done-cc --global` |
 | Skill Evaluation | Hook runs on every prompt, evaluates which skill applies |
 | Session Context | Hook loads PROJECT.md, STATE.md at session start |
@@ -346,6 +352,12 @@ Built into PRINCIPLES.md:
 - Documentation requirements
 
 See [docs/SECURITY.md](docs/SECURITY.md) for the full security hardening guide.
+
+---
+
+## Quick Reference
+
+See [docs/QUICK-REFERENCE.md](docs/QUICK-REFERENCE.md) for all keywords, triggers, and commands.
 
 ---
 

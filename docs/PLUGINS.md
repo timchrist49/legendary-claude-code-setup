@@ -2,7 +2,22 @@
 
 > Plugins extend Claude Code with additional skills, workflows, and capabilities.
 
-## Important Note
+## Auto-Installed Plugins
+
+The bootstrap script automatically installs **7 plugins**:
+- **Superpowers** - Structured development workflow
+- **Episodic Memory** - Cross-session memory
+- **claude-code-setup** - Automation recommendations
+- **claude-md-management** - CLAUDE.md management
+- **code-review** - Automated PR review
+- **code-simplifier** - Code clarity improvements
+- **frontend-design** - Production-grade UI generation
+
+No manual installation required for these!
+
+## Manual Plugin Installation
+
+If you need to install plugins manually (or want additional plugins):
 
 **Plugins must be installed inside Claude Code**, not from the shell. Start Claude Code first:
 
@@ -102,6 +117,80 @@ chmod +x /tmp/backup-claude.sh
 ```
 
 **Documentation:** [github.com/SuperClaude-Org/SuperClaude_Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)
+
+## Official Anthropic Plugins (Auto-Installed)
+
+These 5 plugins are automatically installed by the bootstrap script:
+
+### 4. claude-code-setup
+
+Analyzes your codebase and recommends Claude Code automations (hooks, skills, MCP servers).
+
+**Auto-Installed:** Yes (via bootstrap)
+
+**Triggers:** New project setup, asking for automation recommendations
+
+**Usage:**
+```
+"Recommend automations for this project"
+"Help me set up Claude Code"
+```
+
+### 5. claude-md-management
+
+Manages CLAUDE.md project context files across repositories.
+
+**Auto-Installed:** Yes (via bootstrap)
+
+**Triggers:** Context updates, CLAUDE.md maintenance
+
+**Usage:**
+```
+"Update CLAUDE.md with our decisions"
+"Audit the CLAUDE.md files in this repo"
+```
+
+### 6. code-review
+
+Automated PR review with multiple specialized agents.
+
+**Auto-Installed:** Yes (via bootstrap)
+
+**Triggers:** `/code-review` command, PR work
+
+**Usage:**
+```
+/code-review
+"Review this pull request"
+```
+
+### 7. code-simplifier
+
+Simplifies code for clarity while preserving all functionality.
+
+**Auto-Installed:** Yes (via bootstrap)
+
+**Triggers:** After coding sessions, refactoring requests
+
+**Usage:**
+```
+"Simplify this code"
+"Run code-simplifier on the changes we made"
+```
+
+### 8. frontend-design
+
+Generates distinctive, production-grade frontend interfaces.
+
+**Auto-Installed:** Yes (via bootstrap)
+
+**Triggers:** Frontend work, UI creation requests
+
+**Usage:**
+```
+"Create a dashboard for my app"
+"Build a landing page"
+```
 
 ## Additional Plugins Available
 
