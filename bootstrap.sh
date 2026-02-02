@@ -26,6 +26,7 @@ SKIP_CLAUDE_CODE=false
 SKIP_MCP=false
 SKIP_TOOLS=false
 SKIP_PLUGINS=false
+SKIP_PERMISSIONS=false
 INTERACTIVE=true
 FULL_AUTO=false
 
@@ -119,6 +120,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --skip-plugins)
             SKIP_PLUGINS=true
+            shift
+            ;;
+        --skip-permissions)
+            SKIP_PERMISSIONS=true
             shift
             ;;
         --only-system-deps)
@@ -372,7 +377,7 @@ fi
 # Phase 7: Plugins (user space)
 # ============================================================================
 if [[ "$SKIP_PLUGINS" != "true" ]]; then
-    log_step "Phase 7/7: Plugins (7 total: Superpowers, Episodic Memory, Official Anthropic)"
+    log_step "Phase 7/8: Plugins (7 total: Superpowers, Episodic Memory, Official Anthropic)"
 
     if $IS_ROOT; then
         if [[ -n "${SUDO_USER:-}" ]]; then
@@ -382,6 +387,23 @@ if [[ "$SKIP_PLUGINS" != "true" ]]; then
         fi
     else
         bash "$SCRIPTS_DIR/07-plugins.sh"
+    fi
+fi
+
+# ============================================================================
+# Phase 8: Permissions (user space)
+# ============================================================================
+if [[ "$SKIP_PERMISSIONS" != "true" ]]; then
+    log_step "Phase 8/8: Permissions (Auto-approval for 100+ operations)"
+
+    if $IS_ROOT; then
+        if [[ -n "${SUDO_USER:-}" ]]; then
+            sudo -u "$SUDO_USER" bash "$SCRIPTS_DIR/08-permissions.sh"
+        else
+            bash "$SCRIPTS_DIR/08-permissions.sh"
+        fi
+    else
+        bash "$SCRIPTS_DIR/08-permissions.sh"
     fi
 fi
 
