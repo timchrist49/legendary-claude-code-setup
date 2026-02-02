@@ -5,6 +5,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "~/.claude/hooks/permission-helper.sh"
+          },
+          {
+            "type": "command",
             "command": "~/.claude/hooks/skill-activator.sh"
           }
         ]
