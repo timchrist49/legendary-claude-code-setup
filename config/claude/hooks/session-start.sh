@@ -97,4 +97,13 @@ if [[ -n "$CONTEXT" ]]; then
     echo -e "$TOOL_SUGGESTIONS"
 fi
 
+# Ralph discovery suggestion
+if [[ -f "$HOME/.local/bin/ralph" ]]; then
+    TOOL_SUGGESTIONS+="\n🤖 Autonomous loops:"
+    TOOL_SUGGESTIONS+="\n├── ralph         - Run autonomous development loop (external terminal)"
+    TOOL_SUGGESTIONS+="\n├── ralph-monitor - Live monitoring dashboard"
+    TOOL_SUGGESTIONS+="\n└── ralph-setup   - Initialize Ralph project"
+    echo -e "$TOOL_SUGGESTIONS"
+fi
+
 exit 0
