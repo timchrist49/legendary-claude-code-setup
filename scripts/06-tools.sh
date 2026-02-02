@@ -140,6 +140,31 @@ chmod +x "$RALPH_WRAPPER"
 log_substep "Created: $RALPH_WRAPPER"
 
 # ============================================================================
+# Add ~/.local/bin to PATH for Ralph commands
+# ============================================================================
+log_step "Configuring PATH for local tools"
+
+# Get the actual user (not root) if running with sudo
+ACTUAL_USER="${SUDO_USER:-$USER}"
+ACTUAL_HOME=$(eval echo "~$ACTUAL_USER")
+PROFILE_FILE="$ACTUAL_HOME/.bashrc"
+PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
+
+if [[ "$ACTUAL_USER" != "root" ]]; then
+    if ! grep -q ".local/bin" "$PROFILE_FILE" 2>/dev/null; then
+        echo "" >> "$PROFILE_FILE"
+        echo "# Claude Code local tools (Ralph, etc.)" >> "$PROFILE_FILE"
+        echo "$PATH_LINE" >> "$PROFILE_FILE"
+        log_success "Added ~/.local/bin to PATH in $PROFILE_FILE"
+        log_warn "Run 'source $PROFILE_FILE' or start a new shell to update PATH"
+    else
+        log_info "~/.local/bin already in PATH"
+    fi
+else
+    log_info "Running as root - PATH configuration skipped"
+fi
+
+# ============================================================================
 # Summary
 # ============================================================================
 print_separator
