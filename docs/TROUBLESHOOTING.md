@@ -378,6 +378,55 @@ pip install pythea
 
 ---
 
+## Permissions
+
+### "Proceed?" prompts still appearing
+
+**Symptom:** Claude Code still asks for permission to run commands
+
+**Solution:**
+
+1. Verify permissions file exists:
+   ```bash
+   ls -la ~/.claude/settings.local.json
+   ```
+
+2. Check permission count:
+   ```bash
+   cat ~/.claude/settings.local.json | jq '.permissions.allow | length'
+   ```
+
+3. If less than 100, re-run permissions setup:
+   ```bash
+   cd /path/to/claude-code-super-setup
+   ./scripts/08-permissions.sh
+   ```
+
+4. Restart Claude Code
+
+### Add new permission
+
+**Solution:**
+
+```bash
+# Interactive review
+claude-permissions-review
+
+# Or edit manually
+nano ~/.claude/settings.local.json
+```
+
+### Permission helper errors
+
+**Check error log:**
+```bash
+cat ~/.claude/permission-helper-errors.log
+```
+
+Errors don't block Claude Code operation - they're logged for debugging.
+
+---
+
 ## General Tips
 
 ### Logging
