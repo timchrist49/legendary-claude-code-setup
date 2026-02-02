@@ -46,6 +46,18 @@
 
 All 7 plugins are installed automatically via `claude plugin install` commands.
 
+### Autonomous Permissions System
+
+Automatically configured permissions for seamless operation:
+
+| Component | Purpose |
+|-----------|---------|
+| settings.local.json | 100+ pre-approved operations |
+| permission-helper hook | Suggests GSD/Ralph when appropriate |
+| claude-permissions-review | Review and add new permissions |
+
+**No more "Proceed?" prompts** - Claude Code works autonomously on common development tasks.
+
 ### Additional Tools
 - [Ralph](https://github.com/frankbria/ralph-claude-code) - Autonomous dev loops
 - [Get Shit Done](https://github.com/glittercowboy/get-shit-done) - Spec-driven workflows
@@ -369,6 +381,12 @@ Quick fixes:
 ```bash
 # Reload shell after installation
 source ~/.bashrc
+
+# If Ralph command not found
+source ~/.bashrc
+
+# Review permission suggestions
+claude-permissions-review
 
 # Verify Claude Code
 claude --version
