@@ -420,6 +420,31 @@ else
 fi
 
 # ============================================================================
+# Permissions System
+# ============================================================================
+log_step "Checking Permissions System"
+
+SETTINGS_FILE="$HOME/.claude/settings.local.json"
+if [[ -f "$SETTINGS_FILE" ]]; then
+    count=$(jq '.permissions.allow | length' "$SETTINGS_FILE" 2>/dev/null || echo "0")
+    check_pass "Permissions configured ($count permissions allowed)"
+else
+    check_warn "settings.local.json not found"
+fi
+
+if [[ -f "$HOME/.claude/hooks/permission-helper.sh" ]]; then
+    check_pass "Permission helper hook installed"
+else
+    check_warn "Permission helper hook not found"
+fi
+
+if [[ -f "$HOME/.local/bin/claude-permissions-review" ]]; then
+    check_pass "Permissions review command available"
+else
+    check_warn "Permissions review command not found"
+fi
+
+# ============================================================================
 # Summary
 # ============================================================================
 print_separator
